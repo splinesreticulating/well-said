@@ -23,21 +23,28 @@ export const getRecentMessages = async (): Promise<Message[]> => {
     SELECT
       datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
       message.text AS text,
-      handle.id AS sender
+      handle.id AS contact_id,
+      message.handle_id,
+      handle.ROWID as handle_rowid,
+      message.is_from_me,
+      message.account
     FROM message
     JOIN handle ON message.handle_id = handle.ROWID
     WHERE message.text IS NOT NULL
+    AND handle.id = ?
     ORDER BY message.date DESC
     LIMIT 10;
-  `);
+  `, [PARTNER_HANDLE_ID]);
 
   await db.close();
 
-  return rows.map((row: Message) => ({
-    sender: row.sender === YOUR_HANDLE_ID ? 'me' : 
-           row.sender === PARTNER_HANDLE_ID ? 'partner' : 
+  const formattedRows = rows.map((row: any) => ({
+    sender: row.is_from_me ? 'me' : 
+           row.contact_id === PARTNER_HANDLE_ID ? 'partner' : 
            'unknown',
     text: row.text,
     timestamp: row.timestamp,
   })).reverse();
+
+  return formattedRows;
 };
