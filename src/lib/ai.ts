@@ -8,27 +8,47 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const MODEL = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
+console.log(`🤖 Using OpenAI model: ${MODEL}`);
+
 export const getSuggestedReplies = async (messages: Message[]): Promise<string[]> => {
-  const formattedConversation = messages.map(m => `${m.sender === 'me' ? 'Me' : 'Partner'}: ${m.text}`).join('\n');
+  const seenSenders = new Set<string>();
+  for (const msg of messages) {
+    if (!seenSenders.has(msg.sender)) {
+      seenSenders.add(msg.sender);
+    }
+  }
+
+  const formattedConversation = messages.map(m => {
+    const tag = m.sender === 'me' ? 'Me' : m.sender === 'partner' ? 'Partner' : m.sender;
+    return `${tag}: ${m.text}`;
+  }).join('\n');
 
   const systemPrompt = replyPrompt;
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: formattedConversation }
-    ],
-    temperature: 0.7,
-  });
+  try {
+    const response = await openai.chat.completions.create({
+      model: MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: formattedConversation }
+      ],
+      temperature: process.env.OPENAI_TEMPERATURE ? parseFloat(process.env.OPENAI_TEMPERATURE) : 0.5,
+    });
 
-  const raw = response.choices?.[0]?.message?.content || '';
+    const raw = response.choices?.[0]?.message?.content || '';
 
-  // Try to extract bullet points or numbered suggestions
-  const replies = raw
-    .split(/\n\s*(?:\d+\.|-)/)
-    .map(r => r.trim())
-    .filter(Boolean);
+    const replies = raw
+      .split(/\n\s*(?:\d+\.|-)/)
+      .map(r => r.trim())
+      .filter(Boolean);
 
-  return replies.length > 0 ? replies : [raw];
+    return replies.length > 0 ? replies : [raw];
+  } catch (error: any) {
+    console.error('OpenAI API error:', error);
+    return [
+      '⚠️ Could not generate replies. You may have hit your OpenAI API quota.',
+      'Visit https://platform.openai.com/account/billing to check your usage.',
+    ];
+  }
 };
