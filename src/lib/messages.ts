@@ -2,8 +2,6 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import os from 'os';
 import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config();
 
 export interface Message {
   sender: string;
@@ -35,7 +33,7 @@ export const getRecentMessages = async (): Promise<Message[]> => {
 
   await db.close();
 
-  return rows.map((row: any) => ({
+  return rows.map((row: Message) => ({
     sender: row.sender === YOUR_HANDLE_ID ? 'me' : 
            row.sender === PARTNER_HANDLE_ID ? 'partner' : 
            'unknown',
