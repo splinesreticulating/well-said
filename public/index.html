@@ -1,0 +1,58 @@
+<!-- File: public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WellSaid</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f6f6f6;
+      color: #333;
+    }
+    .conversation {
+      margin-bottom: 1.5rem;
+    }
+    .message {
+      margin: 0.3rem 0;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+    .me {
+      background: #dff9fb;
+      align-self: flex-end;
+    }
+    .partner {
+      background: #f1f2f6;
+      align-self: flex-start;
+    }
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .reply {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .reply:hover {
+      background: #e1f5fe;
+    }
+  </style>
+</head>
+<body>
+  <h1>WellSaid</h1>
+  <div id="conversation" class="conversation"></div>
+  <h2>Suggested Replies</h2>
+  <div id="suggestions" class="suggestions"></div>
+
+  <script src="main.js"></script>
+</body>
+</html>
