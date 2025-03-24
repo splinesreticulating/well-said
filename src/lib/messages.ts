@@ -2,6 +2,8 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import os from 'os';
 import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export interface Message {
   sender: string;
@@ -10,7 +12,8 @@ export interface Message {
 }
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db');
-const YOUR_HANDLE_ID = '<your handle>';
+const YOUR_HANDLE_ID = process.env.MY_PHONE;
+const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE;
 
 export const getRecentMessages = async (): Promise<Message[]> => {
   const db = await open({
@@ -33,7 +36,9 @@ export const getRecentMessages = async (): Promise<Message[]> => {
   await db.close();
 
   return rows.map((row: any) => ({
-    sender: row.sender === YOUR_HANDLE_ID ? 'me' : 'partner',
+    sender: row.sender === YOUR_HANDLE_ID ? 'me' : 
+           row.sender === PARTNER_HANDLE_ID ? 'partner' : 
+           'unknown',
     text: row.text,
     timestamp: row.timestamp,
   })).reverse();
