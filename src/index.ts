@@ -6,7 +6,6 @@ import { getRecentMessages } from './lib/messages';
 import { getSuggestedReplies } from './lib/ai';
 import cors from 'cors';
 
-
 const app = express();
 const PORT = 3000;
 

@@ -1,5 +1,3 @@
-// File: src/lib/ai.ts
-
 import { Message } from './messages';
 import { OpenAI } from 'openai';
 import { replyPrompt } from './prompts';
