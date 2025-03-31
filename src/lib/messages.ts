@@ -10,7 +10,6 @@ export interface Message {
 }
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db');
-const YOUR_HANDLE_ID = process.env.MY_PHONE;
 const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE;
 
 export const getRecentMessages = async (): Promise<Message[]> => {
@@ -33,10 +32,12 @@ export const getRecentMessages = async (): Promise<Message[]> => {
     WHERE message.text IS NOT NULL
     AND handle.id = ?
     ORDER BY message.date DESC
-    LIMIT 10;
+    LIMIT 30;
   `, [PARTNER_HANDLE_ID]);
 
   await db.close();
+
+  console.log(`📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`);
 
   const formattedRows = rows.map((row: any) => ({
     sender: row.is_from_me ? 'me' : 
