@@ -11,11 +11,14 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.static('public'));
+app.use(express.json());
 
-app.get('/replies', async (req, res) => {
+app.post('/replies', async (req, res) => {
+  const { tone } = req.body;
+
   try {
     const messages = await getRecentMessages();
-    const replies = await getSuggestedReplies(messages);
+    const replies = await getSuggestedReplies(messages, tone || 'gentle');
     res.json({ messages, replies });
   } catch (err) {
     console.error(err);
