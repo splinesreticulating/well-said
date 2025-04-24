@@ -1,10 +1,28 @@
+function saveContext(val) {
+  localStorage.setItem('wellsaid_context', val);
+}
+function loadContext() {
+  return localStorage.getItem('wellsaid_context') || '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const contextInput = document.getElementById('context-input');
+  if (contextInput) {
+    contextInput.value = loadContext();
+    contextInput.addEventListener('input', e => {
+      saveContext(e.target.value);
+    });
+  }
+});
+
 async function fetchReplies() {
   const tone = document.getElementById('tone-select')?.value || 'gentle';
+  const context = document.getElementById('context-input')?.value || '';
 
   const res = await fetch('/replies', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tone }),
+    body: JSON.stringify({ tone, context }),
   });
 
   const { messages, replies } = await res.json();

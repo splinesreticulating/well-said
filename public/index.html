@@ -49,6 +49,14 @@
 </head>
 <body>
   <h1>WellSaid</h1>
+  <div style="margin-bottom: 1.5rem;">
+    <label for="context-input"><strong>Context</strong> (facts about you & your partner, general instructions to AI):</label><br />
+    <textarea id="context-input" rows="4" style="width: 100%; margin-top: 0.25rem;"></textarea>
+    <div style="font-size: 0.95em; color: #666; margin-top: 0.2rem;">
+      E.g. "She often says 'I'm fine' which always means she's not fine."<br>
+      "We both care about feeling heard, but I often get defensive."
+    </div>
+  </div>
   <div id="conversation" class="conversation"></div>
   <label for="tone-select">Tone:</label>
   <select id="tone-select">

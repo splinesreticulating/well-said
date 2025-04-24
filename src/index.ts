@@ -14,11 +14,11 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.post('/replies', async (req, res) => {
-  const { tone } = req.body;
+  const { tone, context } = req.body;
 
   try {
     const messages = await getRecentMessages();
-    const replies = await getSuggestedReplies(messages, tone || 'gentle');
+    const replies = await getSuggestedReplies(messages, tone || 'gentle', context || '');
     res.json({ messages, replies });
   } catch (err) {
     console.error(err);

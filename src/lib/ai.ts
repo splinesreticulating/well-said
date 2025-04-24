@@ -11,14 +11,15 @@ console.log(`🤖 Using OpenAI model: ${MODEL}`);
 
 export const getSuggestedReplies = async (
   messages: Message[],
-  tone: string
+  tone: string,
+  context: string
 ): Promise<string[]> => {
   const recentText = messages.map(m => {
     const tag = m.sender === 'me' ? 'Me' : m.sender === 'partner' ? 'Partner' : m.sender;
     return `${tag}: ${m.text}`;
   });
 
-  const prompt = buildReplyPrompt(recentText, tone);
+  const prompt = buildReplyPrompt(recentText, tone, context);
 
   try {
     const response = await openai.chat.completions.create({
