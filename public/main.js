@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
             saveContext(e.target.value)
         })
     }
+    const windowBack = document.getElementById("window-back")
+    if (windowBack) {
+        windowBack.addEventListener("change", () => {
+            fetchReplies()
+        })
+    }
 })
 
 async function fetchReplies() {
