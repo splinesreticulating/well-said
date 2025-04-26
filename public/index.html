@@ -52,18 +52,39 @@
     .reply:hover {
       background: #e1f5fe;
     }
+    details {
+      margin-top: 2rem;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      padding: 0.5rem 1rem 1rem 1rem;
+      max-width: 600px;
+    }
+    details[open] > summary::after {
+      content: " \25BC";
+      font-size: 0.9em;
+      color: #888;
+    }
+    details > summary::after {
+      content: " \25B6";
+      font-size: 0.9em;
+      color: #888;
+    }
+    details > summary {
+      cursor: pointer;
+      outline: none;
+      font-size: 1.05em;
+      margin-bottom: 0.25rem;
+    }
+    #context-input {
+      margin-top: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
   </style>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh; align-items: stretch;">
   <h1>WellSaid</h1>
-  <div style="margin-bottom: 1.5rem;">
-    <label for="context-input"><strong>Context</strong> (facts about you & your partner, general instructions to AI):</label><br />
-    <textarea id="context-input" rows="4" style="width: 100%; margin-top: 0.25rem;"></textarea>
-    <div style="font-size: 0.95em; color: #666; margin-top: 0.2rem;">
-      E.g. "She often says 'I'm fine' which always means she's not fine."<br>
-      "We both care about feeling heard, but I often get defensive."
-    </div>
-  </div>
+
   <div id="conversation" class="conversation"></div>
 
   <label for="tone-select">Tone:</label>
@@ -77,6 +98,14 @@
   <h2>Suggested Replies</h2>
   <div id="suggestions" class="suggestions"></div>
 
+  <details id="context-details" style="margin-top:2rem;">
+    <summary><strong>Context</strong> (facts about you & your partner, general instructions to AI)</summary>
+    <textarea id="context-input" rows="4" style="width: 100%; margin-top: 0.75rem;"></textarea>
+    <div style="font-size: 0.95em; color: #666; margin-top: 0.2rem;">
+      E.g. "She often says 'I'm fine' which always means she's not fine."<br>
+      "We both care about feeling heard, but I often get defensive."
+    </div>
+  </details>
   <script src="main.js"></script>
 </body>
 </html>

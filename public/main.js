@@ -7,10 +7,15 @@ function loadContext() {
 
 document.addEventListener("DOMContentLoaded", () => {
     const contextInput = document.getElementById("context-input")
+    const contextDetails = document.getElementById("context-details")
     if (contextInput) {
         contextInput.value = loadContext()
         contextInput.addEventListener("input", (e) => {
             saveContext(e.target.value)
+        })
+        // Expand details when textarea is focused
+        contextInput.addEventListener("focus", () => {
+            if (contextDetails) contextDetails.open = true
         })
     }
     const windowBack = document.getElementById("window-back")
