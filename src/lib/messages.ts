@@ -1,42 +1,57 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import os from 'os';
-import path from 'path';
+import sqlite3 from "sqlite3"
+import { open } from "sqlite"
+import os from "node:os"
+import path from "node:path"
 
 export interface Message {
-  sender: string;
-  text: string;
-  timestamp: string;
+    sender: string
+    text: string
+    timestamp: string
 }
 
-const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db');
-const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE;
+interface MessageRow {
+    is_from_me: boolean
+    text: string
+    date: string
+    contact_id?: string
+    timestamp: string
+    // Add other properties as needed
+}
 
-export const getRecentMessages = async (startDate?: string, endDate?: string): Promise<Message[]> => {
-  const db = await open({
-    filename: CHAT_DB_PATH,
-    driver: sqlite3.Database,
-  });
+const CHAT_DB_PATH = path.join(os.homedir(), "Library", "Messages", "chat.db")
+const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 
-  // Helper: Convert ISO date string to Apple nanoseconds-since-2001-01-01
-  function isoToAppleNs(iso: string): number {
-    const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime();
-    const target = new Date(iso).getTime();
-    return (target - appleEpoch) * 1000000; // ms to ns
-  }
+export const getRecentMessages = async (
+    startDate?: string,
+    endDate?: string,
+): Promise<Message[]> => {
+    const db = await open({
+        filename: CHAT_DB_PATH,
+        driver: sqlite3.Database,
+    })
 
-  let dateWhere = '';
-  const params: any[] = [PARTNER_HANDLE_ID];
-  if (startDate) {
-    dateWhere += ' AND message.date >= ?';
-    params.push(isoToAppleNs(startDate));
-  }
-  if (endDate) {
-    dateWhere += ' AND message.date <= ?';
-    params.push(isoToAppleNs(endDate));
-  }
+    // Helper: Convert ISO date string to Apple nanoseconds-since-2001-01-01
+    function isoToAppleNs(iso: string): number {
+        const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime()
+        const target = new Date(iso).getTime()
+        return (target - appleEpoch) * 1000000 // ms to ns
+    }
 
-  const query = `
+    let dateWhere = ""
+    const params: (string | number)[] = []
+    if (PARTNER_HANDLE_ID !== undefined) {
+        params.push(PARTNER_HANDLE_ID)
+    }
+    if (startDate) {
+        dateWhere += " AND message.date >= ?"
+        params.push(isoToAppleNs(startDate))
+    }
+    if (endDate) {
+        dateWhere += " AND message.date <= ?"
+        params.push(isoToAppleNs(endDate))
+    }
+
+    const query = `
     SELECT
       datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
       message.text AS text,
@@ -51,21 +66,27 @@ export const getRecentMessages = async (startDate?: string, endDate?: string): P
     AND handle.id = ?
     ${dateWhere}
     ORDER BY message.date DESC
-  `;
+  `
 
-  const rows = await db.all(query, params);
+    const rows = await db.all(query, params)
 
-  await db.close();
+    await db.close()
 
-  console.log(`📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`);
+    console.log(
+        `📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`,
+    )
 
-  const formattedRows = rows.map((row: any) => ({
-    sender: row.is_from_me ? 'me' : 
-           row.contact_id === PARTNER_HANDLE_ID ? 'partner' : 
-           'unknown',
-    text: row.text,
-    timestamp: row.timestamp,
-  })).reverse();
+    const formattedRows = rows
+        .map((row: MessageRow) => ({
+            sender: row.is_from_me
+                ? "me"
+                : row.contact_id === PARTNER_HANDLE_ID
+                  ? "partner"
+                  : "unknown",
+            text: row.text,
+            timestamp: row.timestamp,
+        }))
+        .reverse()
 
-  return formattedRows;
-};
+    return formattedRows
+}

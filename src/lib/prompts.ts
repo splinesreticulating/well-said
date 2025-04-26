@@ -1,11 +1,17 @@
 export const relationshipPrimer = `
 I am a thoughtful, emotionally aware partner who prefers clarity and warmth. My partner lives with long COVID and constantly needs reassurance, space, and understanding. Our relationship is weak and often tested by health stress and emotional misalignment. I want help replying in a way that feels honest, calm, and caring — in my voice, not a generic AI voice.
-`;
+`
 
-export const buildReplyPrompt = (messages: string[], tone: string, context: string): string => {
-  const formattedMessages = messages.map((msg, idx) => `Message ${idx + 1}: ${msg}`).join('\n');
+export const buildReplyPrompt = (
+    messages: string[],
+    tone: string,
+    context: string,
+): string => {
+    const formattedMessages = messages
+        .map((msg, idx) => `Message ${idx + 1}: ${msg}`)
+        .join("\n")
 
-  return `
+    return `
 You are helping the user craft thoughtful, emotionally intelligent responses to messages from their partner.
 
 Keep in mind:
@@ -25,5 +31,5 @@ Suggest 2–3 short, natural replies that the user might send. Keep it emotional
 Reply 1:
 Reply 2:
 Reply 3:
-`;
-};
+`
+}

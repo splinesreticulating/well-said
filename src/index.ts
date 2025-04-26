@@ -1,31 +1,35 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import dotenv from "dotenv"
+dotenv.config()
 
-import express from 'express';
-import { getRecentMessages } from './lib/messages';
-import { getSuggestedReplies } from './lib/ai';
-import cors from 'cors';
+import express from "express"
+import { getRecentMessages } from "./lib/messages"
+import { getSuggestedReplies } from "./lib/ai"
+import cors from "cors"
 
-const app = express();
-const PORT = 3000;
+const app = express()
+const PORT = 3000
 
-app.use(cors());
-app.use(express.static('public'));
-app.use(express.json());
+app.use(cors())
+app.use(express.static("public"))
+app.use(express.json())
 
-app.post('/replies', async (req, res) => {
-  const { tone, context, startDate, endDate } = req.body;
+app.post("/replies", async (req, res) => {
+    const { tone, context, startDate, endDate } = req.body
 
-  try {
-    const messages = await getRecentMessages(startDate, endDate);
-    const { summary, replies } = await getSuggestedReplies(messages, tone || 'gentle', context || '');
-    res.json({ summary, replies });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong.' });
-  }
-});
+    try {
+        const messages = await getRecentMessages(startDate, endDate)
+        const { summary, replies } = await getSuggestedReplies(
+            messages,
+            tone || "gentle",
+            context || "",
+        )
+        res.json({ summary, replies })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: "Something went wrong." })
+    }
+})
 
 app.listen(PORT, () => {
-  console.log(`✅ SmartReply app listening at http://localhost:${PORT}`);
-});
+    console.log(`✅ SmartReply app listening at http://localhost:${PORT}`)
+})
