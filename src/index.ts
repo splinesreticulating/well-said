@@ -14,10 +14,10 @@ app.use(express.static('public'));
 app.use(express.json());
 
 app.post('/replies', async (req, res) => {
-  const { tone, context } = req.body;
+  const { tone, context, startDate, endDate } = req.body;
 
   try {
-    const messages = await getRecentMessages();
+    const messages = await getRecentMessages(startDate, endDate);
     const { summary, replies } = await getSuggestedReplies(messages, tone || 'gentle', context || '');
     res.json({ summary, replies });
   } catch (err) {

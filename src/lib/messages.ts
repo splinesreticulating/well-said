@@ -12,13 +12,31 @@ export interface Message {
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db');
 const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE;
 
-export const getRecentMessages = async (): Promise<Message[]> => {
+export const getRecentMessages = async (startDate?: string, endDate?: string): Promise<Message[]> => {
   const db = await open({
     filename: CHAT_DB_PATH,
     driver: sqlite3.Database,
   });
 
-  const rows = await db.all(`
+  // Helper: Convert ISO date string to Apple nanoseconds-since-2001-01-01
+  function isoToAppleNs(iso: string): number {
+    const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime();
+    const target = new Date(iso).getTime();
+    return (target - appleEpoch) * 1000000; // ms to ns
+  }
+
+  let dateWhere = '';
+  const params: any[] = [PARTNER_HANDLE_ID];
+  if (startDate) {
+    dateWhere += ' AND message.date >= ?';
+    params.push(isoToAppleNs(startDate));
+  }
+  if (endDate) {
+    dateWhere += ' AND message.date <= ?';
+    params.push(isoToAppleNs(endDate));
+  }
+
+  const query = `
     SELECT
       datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
       message.text AS text,
@@ -31,9 +49,11 @@ export const getRecentMessages = async (): Promise<Message[]> => {
     JOIN handle ON message.handle_id = handle.ROWID
     WHERE message.text IS NOT NULL
     AND handle.id = ?
+    ${dateWhere}
     ORDER BY message.date DESC
-    LIMIT 30;
-  `, [PARTNER_HANDLE_ID]);
+  `;
+
+  const rows = await db.all(query, params);
 
   await db.close();
 
