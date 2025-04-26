@@ -13,12 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
         contextInput.addEventListener("input", (e) => {
             saveContext(e.target.value)
         })
-        // Expand details when textarea is focused
         contextInput.addEventListener("focus", () => {
             if (contextDetails) contextDetails.open = true
         })
     }
-    // Tone radio group event listener
     const toneGroup = document.getElementById("tone-group")
     if (toneGroup) {
         toneGroup.addEventListener("change", (e) => {
@@ -53,8 +51,8 @@ async function fetchReplies() {
         const days = Number.parseInt(windowVal)
         start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
     } else {
-        // fallback: default to 3 days
-        start = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000)
+        // fallback: default to shortest window
+        start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)
     }
     const startDate = start.toISOString()
 
@@ -69,10 +67,9 @@ async function fetchReplies() {
 
         const convoDiv = document.getElementById("conversation")
         convoDiv.innerHTML = ""
-        // Move 'Summarize messages from' and select above the summary
-    const timeframeDiv = document.createElement("div")
-    timeframeDiv.className = "timeframe-controls"
-    timeframeDiv.innerHTML = `
+        const timeframeDiv = document.createElement("div")
+        timeframeDiv.className = "timeframe-controls"
+        timeframeDiv.innerHTML = `
       <label for="window-back"><strong>Summarize messages from:</strong></label>
       <select id="window-back" name="window-back">
         <option value="1h">Last hour</option>
@@ -86,6 +83,7 @@ async function fetchReplies() {
         <option value="7d">Last week</option>
       </select>
     `;
+    timeframeDiv.style.marginBottom = "1rem";
     convoDiv.appendChild(timeframeDiv);
 
     const summaryDiv = document.createElement("div")
@@ -93,12 +91,10 @@ async function fetchReplies() {
     summaryDiv.textContent = summary
     convoDiv.appendChild(summaryDiv)
 
-    // Set the window-back select value to match current
     const windowBackSelect = timeframeDiv.querySelector("#window-back");
     if (windowBackSelect) {
       windowBackSelect.value = windowVal;
       windowBackSelect.addEventListener("change", () => {
-        // Clear the summary text immediately
         const summaryDiv = convoDiv.querySelector('.summary');
         if (summaryDiv) summaryDiv.textContent = '';
         fetchReplies();
