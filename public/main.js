@@ -54,10 +54,38 @@ async function fetchReplies() {
 
         const convoDiv = document.getElementById("conversation")
         convoDiv.innerHTML = ""
-        const summaryDiv = document.createElement("div")
-        summaryDiv.className = "summary"
-        summaryDiv.textContent = summary
-        convoDiv.appendChild(summaryDiv)
+        // Move 'Summarize messages from' and select above the summary
+    const timeframeDiv = document.createElement("div")
+    timeframeDiv.className = "timeframe-controls"
+    timeframeDiv.innerHTML = `
+      <label for="window-back"><strong>Summarize messages from:</strong></label>
+      <select id="window-back" name="window-back">
+        <option value="1h">Last hour</option>
+        <option value="6h">Last 6 hours</option>
+        <option value="12h">Last 12 hours</option>
+        <option value="1d">Last day</option>
+        <option value="2d">Last 2 days</option>
+        <option value="3d">Last 3 days</option>
+        <option value="4d">Last 4 days</option>
+        <option value="5d">Last 5 days</option>
+        <option value="7d">Last week</option>
+      </select>
+    `;
+    convoDiv.appendChild(timeframeDiv);
+
+    const summaryDiv = document.createElement("div")
+    summaryDiv.className = "summary"
+    summaryDiv.textContent = summary
+    convoDiv.appendChild(summaryDiv)
+
+    // Set the window-back select value to match current
+    const windowBackSelect = timeframeDiv.querySelector("#window-back");
+    if (windowBackSelect) {
+      windowBackSelect.value = windowVal;
+      windowBackSelect.addEventListener("change", () => {
+        fetchReplies();
+      });
+    }
 
         const suggDiv = document.getElementById("suggestions")
         suggDiv.innerHTML = ""
