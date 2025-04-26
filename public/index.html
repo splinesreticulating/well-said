@@ -69,14 +69,14 @@
 
   <div id="conversation" class="conversation"></div>
 
-  <div id="tone-group" style="margin-bottom: 1rem;">
-    <span style="font-weight: bold;">Tone:</span>
-    <label style="margin-left: 1em;"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
-    <label style="margin-left: 1em;"><input type="radio" name="tone" value="honest"> Honest</label>
-    <label style="margin-left: 1em;"><input type="radio" name="tone" value="funny"> Funny</label>
-    <label style="margin-left: 1em;"><input type="radio" name="tone" value="reassuring"> Reassuring</label>
-    <label style="margin-left: 1em;"><input type="radio" name="tone" value="concise"> Concise</label>
-  </div>
+  <label for="tone-select" style="font-weight: bold; margin: 1.5rem 0 0.5rem 0; display: block;">Tone:</label>
+  <select id="tone-select" style="margin-bottom: 1.5rem; width: 100%; max-width: 300px;">
+    <option value="gentle">Gentle</option>
+    <option value="honest">Honest</option>
+    <option value="funny">Funny</option>
+    <option value="reassuring">Reassuring</option>
+    <option value="concise">Concise</option>
+  </select>
   <h2>Suggested Replies</h2>
   <div id="suggestions" class="suggestions"></div>
 
