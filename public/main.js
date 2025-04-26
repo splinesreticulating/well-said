@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 async function fetchReplies() {
+    const suggDiv = document.getElementById("suggestions");
+    if (suggDiv) {
+        suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    }
     const tone = document.getElementById("tone-select")?.value || "gentle"
     const context = document.getElementById("context-input")?.value || ""
     const windowVal = document.getElementById("window-back")?.value || "3d"
@@ -33,29 +37,37 @@ async function fetchReplies() {
     }
     const startDate = start.toISOString()
 
-    const res = await fetch("/replies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tone, context, startDate }),
-    })
+    try {
+        const res = await fetch("/replies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tone, context, startDate }),
+        })
 
-    const { summary, replies } = await res.json()
+        const { summary, replies } = await res.json()
 
-    const convoDiv = document.getElementById("conversation")
-    convoDiv.innerHTML = ""
-    const summaryDiv = document.createElement("div")
-    summaryDiv.className = "summary"
-    summaryDiv.textContent = summary
-    convoDiv.appendChild(summaryDiv)
+        const convoDiv = document.getElementById("conversation")
+        convoDiv.innerHTML = ""
+        const summaryDiv = document.createElement("div")
+        summaryDiv.className = "summary"
+        summaryDiv.textContent = summary
+        convoDiv.appendChild(summaryDiv)
 
-    const suggDiv = document.getElementById("suggestions")
-    suggDiv.innerHTML = ""
-    for (const reply of replies) {
-        const div = document.createElement("div")
-        div.className = "reply"
-        div.textContent = reply
-        div.onclick = () => navigator.clipboard.writeText(reply)
-        suggDiv.appendChild(div)
+        const suggDiv = document.getElementById("suggestions")
+        suggDiv.innerHTML = ""
+        for (const reply of replies) {
+            const div = document.createElement("div")
+            div.className = "reply"
+            div.textContent = reply
+            div.onclick = () => navigator.clipboard.writeText(reply)
+            suggDiv.appendChild(div)
+        }
+        suggDiv.innerHTML += '<div class="loading-indicator" style="display: none;">Loaded</div>';
+    } catch (error) {
+        const suggDiv = document.getElementById("suggestions");
+        if (suggDiv) {
+            suggDiv.innerHTML = '<div class="loading-indicator" style="color: red;">Failed to load replies.</div>';
+        }
     }
 }
 
