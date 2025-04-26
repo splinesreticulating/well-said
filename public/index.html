@@ -60,26 +60,6 @@
       padding: 0.5rem 1rem 1rem 1rem;
       max-width: 600px;
     }
-    details[open] > summary::after {
-      content: " \25BC";
-      font-size: 0.9em;
-      color: #888;
-    }
-    details > summary::after {
-      content: " \25B6";
-      font-size: 0.9em;
-      color: #888;
-    }
-    details > summary {
-      cursor: pointer;
-      outline: none;
-      font-size: 1.05em;
-      margin-bottom: 0.25rem;
-    }
-    #context-input {
-      margin-top: 0.75rem;
-      margin-bottom: 0.25rem;
-    }
   </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh; align-items: stretch;">
@@ -87,14 +67,14 @@
 
   <div id="conversation" class="conversation"></div>
 
-  <label for="tone-select">Tone:</label>
-  <select id="tone-select">
-    <option value="gentle">Gentle</option>
-    <option value="honest">Honest</option>
-    <option value="funny">Funny</option>
-    <option value="reassuring">Reassuring</option>
-    <option value="concise">Concise</option>
-  </select>
+  <div id="tone-group" style="margin-bottom: 1rem;">
+    <span style="font-weight: bold;">Tone:</span>
+    <label style="margin-left: 1em;"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
+    <label style="margin-left: 1em;"><input type="radio" name="tone" value="honest"> Honest</label>
+    <label style="margin-left: 1em;"><input type="radio" name="tone" value="funny"> Funny</label>
+    <label style="margin-left: 1em;"><input type="radio" name="tone" value="reassuring"> Reassuring</label>
+    <label style="margin-left: 1em;"><input type="radio" name="tone" value="concise"> Concise</label>
+  </div>
   <h2>Suggested Replies</h2>
   <div id="suggestions" class="suggestions"></div>
 

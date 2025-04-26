@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (contextDetails) contextDetails.open = true
         })
     }
+    // Tone radio group event listener
+    const toneGroup = document.getElementById("tone-group")
+    if (toneGroup) {
+        toneGroup.addEventListener("change", (e) => {
+            if (e.target && e.target.name === "tone") {
+                fetchReplies();
+            }
+        });
+    }
     const windowBack = document.getElementById("window-back")
     if (windowBack) {
         windowBack.addEventListener("change", () => {
@@ -31,7 +40,8 @@ async function fetchReplies() {
     if (suggDiv) {
         suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>';
     }
-    const tone = document.getElementById("tone-select")?.value || "gentle"
+    const toneRadio = document.querySelector('input[name="tone"]:checked');
+    const tone = toneRadio ? toneRadio.value : "gentle"
     const context = document.getElementById("context-input")?.value || ""
     const windowVal = document.getElementById("window-back")?.value || "3d"
     const now = new Date()
