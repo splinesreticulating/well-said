@@ -83,6 +83,9 @@ async function fetchReplies() {
     if (windowBackSelect) {
       windowBackSelect.value = windowVal;
       windowBackSelect.addEventListener("change", () => {
+        // Clear the summary text immediately
+        const summaryDiv = convoDiv.querySelector('.summary');
+        if (summaryDiv) summaryDiv.textContent = '';
         fetchReplies();
       });
     }
