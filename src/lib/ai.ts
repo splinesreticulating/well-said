@@ -1,5 +1,6 @@
 import { Message } from './messages';
 import { OpenAI } from 'openai';
+// @ts-ignore: suppress TS resolution error for local prompts module
 import { buildReplyPrompt } from './prompts';
 
 const openai = new OpenAI({
@@ -13,7 +14,7 @@ export const getSuggestedReplies = async (
   messages: Message[],
   tone: string,
   context: string
-): Promise<string[]> => {
+): Promise<{ summary: string; replies: string[] }> => {
   const recentText = messages.map(m => {
     const tag = m.sender === 'me' ? 'Me' : m.sender === 'partner' ? 'Partner' : m.sender;
     return `${tag}: ${m.text}`;
@@ -32,14 +33,13 @@ export const getSuggestedReplies = async (
     });
 
     const rawOutput = response.choices[0].message?.content || '';
-    const replies = rawOutput
-      .split(/Reply \d:/)
-      .map(r => r.trim())
-      .filter(Boolean);
-
-    return replies;
+    const summaryMatch = rawOutput.match(/Summary:\s*([\s\S]*?)(?=\n\n|$)/);
+    const summary = summaryMatch ? summaryMatch[1].trim() : '';
+    const replyMatches = [...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g)];
+    const replies = replyMatches.map(m => m[1].trim());
+    return { summary, replies };
   } catch (err) {
     console.error('Error generating replies:', err);
-    return ['(Sorry, I had trouble generating a response.)'];
+    return { summary: '', replies: ['(Sorry, I had trouble generating a response.)'] };
   }
 };

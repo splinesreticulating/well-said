@@ -18,8 +18,8 @@ app.post('/replies', async (req, res) => {
 
   try {
     const messages = await getRecentMessages();
-    const replies = await getSuggestedReplies(messages, tone || 'gentle', context || '');
-    res.json({ messages, replies });
+    const { summary, replies } = await getSuggestedReplies(messages, tone || 'gentle', context || '');
+    res.json({ summary, replies });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Something went wrong.' });

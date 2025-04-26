@@ -25,16 +25,14 @@ async function fetchReplies() {
     body: JSON.stringify({ tone, context }),
   });
 
-  const { messages, replies } = await res.json();
+  const { summary, replies } = await res.json();
 
   const convoDiv = document.getElementById('conversation');
   convoDiv.innerHTML = '';
-  messages.forEach(msg => {
-    const div = document.createElement('div');
-    div.className = `message ${msg.sender}`;
-    div.textContent = `${msg.sender === 'me' ? 'Me' : 'Partner'}: ${msg.text}`;
-    convoDiv.appendChild(div);
-  });
+  const summaryDiv = document.createElement('div');
+  summaryDiv.className = 'summary';
+  summaryDiv.textContent = summary;
+  convoDiv.appendChild(summaryDiv);
 
   const suggDiv = document.getElementById('suggestions');
   suggDiv.innerHTML = '';
