@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 async function fetchReplies() {
-    const suggDiv = document.getElementById("suggestions");
+    const suggDiv = document.getElementById("suggestions")
     if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>';
+        suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>'
     }
     const tone = document.getElementById("tone-select")?.value || "gentle"
     const context = document.getElementById("context-input")?.value || ""
@@ -79,24 +79,24 @@ async function fetchReplies() {
         <option value="5d">Last 5 days</option>
         <option value="7d">Last week</option>
       </select>
-    `;
-    timeframeDiv.style.marginBottom = "1rem";
-    convoDiv.appendChild(timeframeDiv);
+    `
+        timeframeDiv.style.marginBottom = "1rem"
+        convoDiv.appendChild(timeframeDiv)
 
-    const summaryDiv = document.createElement("div")
-    summaryDiv.className = "summary"
-    summaryDiv.textContent = summary
-    convoDiv.appendChild(summaryDiv)
+        const summaryDiv = document.createElement("div")
+        summaryDiv.className = "summary"
+        summaryDiv.textContent = summary
+        convoDiv.appendChild(summaryDiv)
 
-    const windowBackSelect = timeframeDiv.querySelector("#window-back");
-    if (windowBackSelect) {
-      windowBackSelect.value = windowVal;
-      windowBackSelect.addEventListener("change", () => {
-        const summaryDiv = convoDiv.querySelector('.summary');
-        if (summaryDiv) summaryDiv.textContent = '';
-        fetchReplies();
-      });
-    }
+        const windowBackSelect = timeframeDiv.querySelector("#window-back")
+        if (windowBackSelect) {
+            windowBackSelect.value = windowVal
+            windowBackSelect.addEventListener("change", () => {
+                const summaryDiv = convoDiv.querySelector(".summary")
+                if (summaryDiv) summaryDiv.textContent = ""
+                fetchReplies()
+            })
+        }
 
         const suggDiv = document.getElementById("suggestions")
         suggDiv.innerHTML = ""
@@ -107,11 +107,13 @@ async function fetchReplies() {
             div.onclick = () => navigator.clipboard.writeText(reply)
             suggDiv.appendChild(div)
         }
-        suggDiv.innerHTML += '<div class="loading-indicator" style="display: none;">Loaded</div>';
+        suggDiv.innerHTML +=
+            '<div class="loading-indicator" style="display: none;">Loaded</div>'
     } catch (error) {
-        const suggDiv = document.getElementById("suggestions");
+        const suggDiv = document.getElementById("suggestions")
         if (suggDiv) {
-            suggDiv.innerHTML = '<div class="loading-indicator" style="color: red;">Failed to load replies.</div>';
+            suggDiv.innerHTML =
+                '<div class="loading-indicator" style="color: red;">Failed to load replies.</div>'
         }
     }
 }
