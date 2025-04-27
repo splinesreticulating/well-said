@@ -15,7 +15,6 @@ interface MessageRow {
     date: string
     contact_id?: string
     timestamp: string
-    // Add other properties as needed
 }
 
 const CHAT_DB_PATH = path.join(os.homedir(), "Library", "Messages", "chat.db")
@@ -30,7 +29,7 @@ export const getRecentMessages = async (
         driver: sqlite3.Database,
     })
 
-    // Helper: Convert ISO date string to Apple nanoseconds-since-2001-01-01
+    // Convert ISO date string to Apple nanoseconds-since-2001-01-01
     function isoToAppleNs(iso: string): number {
         const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime()
         const target = new Date(iso).getTime()

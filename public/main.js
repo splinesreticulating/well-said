@@ -1,40 +1,77 @@
-function saveContext(val) {
-    localStorage.setItem("wellsaid_context", val)
-}
-function loadContext() {
-    return localStorage.getItem("wellsaid_context") || ""
-}
+// Utility functions
+const $ = (id) => document.getElementById(id);
+const on = (el, event, handler) => el?.addEventListener(event, handler);
+
+const saveContext = (val) => localStorage.setItem("wellsaid_context", val);
+const loadContext = () => localStorage.getItem("wellsaid_context") || "";
+
+const setupInputPersistence = () => {
+    const contextInput = $("context-input");
+    const contextDetails = $("context-details");
+    if (!contextInput) return;
+    contextInput.value = loadContext();
+    on(contextInput, "input", (e) => saveContext(e.target?.value));
+    on(contextInput, "focus", () => { if (contextDetails) contextDetails.open = true; });
+};
+
+const setupSelectRefresh = () => {
+    for (const id of ["tone-select", "window-back"]) {
+        const el = $(id);
+        on(el, "change", fetchReplies);
+    }
+};
 
 document.addEventListener("DOMContentLoaded", () => {
-    const contextInput = document.getElementById("context-input")
-    const contextDetails = document.getElementById("context-details")
-    if (contextInput) {
-        contextInput.value = loadContext()
-        contextInput.addEventListener("input", (e) => {
-            saveContext(e.target.value)
-        })
-        contextInput.addEventListener("focus", () => {
-            if (contextDetails) contextDetails.open = true
-        })
-    }
-    const toneSelect = document.getElementById("tone-select")
-    if (toneSelect) {
-        toneSelect.addEventListener("change", () => {
-            fetchReplies()
-        })
-    }
-    const windowBack = document.getElementById("window-back")
-    if (windowBack) {
-        windowBack.addEventListener("change", () => {
-            fetchReplies()
-        })
-    }
-})
+    setupInputPersistence();
+    setupSelectRefresh();
+});
+
+// Helper to revert input back to display div
+function revertToDiv(val, div, suggDiv) {
+    div.innerHTML = "";
+    div.textContent = val;
+    div.tabIndex = 0;
+    div.onclick = () => showEditableInput(val, div, suggDiv);
+}
+
+function showEditableInput(val, div, suggDiv) {
+    div.innerHTML = "";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = val;
+    input.className = "reply-edit";
+    input.style.width = "80%";
+    input.style.marginRight = "0.5rem";
+    const copyBtn = createCopyButton(() => input.value);
+    input.onblur = () => revertToDiv(input.value, div, suggDiv);
+    input.onkeydown = (e) => { if (e.key === "Enter") revertToDiv(input.value, div, suggDiv); };
+    div.append(input, copyBtn);
+    input.focus();
+}
+
+function createCopyButton(getValue) {
+    const btn = document.createElement("button");
+    btn.textContent = "Copy";
+    btn.className = "copy-btn";
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(getValue());
+    };
+    return btn;
+}
 
 async function fetchReplies() {
-    const suggDiv = document.getElementById("suggestions");
+    const suggDiv = document.getElementById("suggestions")
     if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>';
+        suggDiv.innerHTML = '<div class="loading-indicator spinner"></div>'
+    }
+    // Remove summary and count when loading
+    const convoDiv = document.getElementById("conversation");
+    if (convoDiv) {
+        const oldSummary = convoDiv.querySelector('.summary');
+        if (oldSummary) oldSummary.remove();
+        const oldCount = convoDiv.querySelector('.message-count');
+        if (oldCount) oldCount.remove();
     }
     const tone = document.getElementById("tone-select")?.value || "gentle"
     const context = document.getElementById("context-input")?.value || ""
@@ -48,7 +85,7 @@ async function fetchReplies() {
         const days = Number.parseInt(windowVal)
         start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
     } else {
-        // fallback: default to shortest window
+        // default to shortest window
         start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)
     }
     const startDate = start.toISOString()
@@ -60,60 +97,96 @@ async function fetchReplies() {
             body: JSON.stringify({ tone, context, startDate }),
         })
 
-        const { summary, replies } = await res.json()
+        const { summary, replies, messageCount } = await res.json()
 
-        const convoDiv = document.getElementById("conversation")
-        convoDiv.innerHTML = ""
-        const timeframeDiv = document.createElement("div")
-        timeframeDiv.className = "timeframe-controls"
-        timeframeDiv.innerHTML = `
-      <label for="window-back"><strong>Summarize messages from:</strong></label>
-      <select id="window-back" name="window-back">
-        <option value="1h">Last hour</option>
-        <option value="6h">Last 6 hours</option>
-        <option value="12h">Last 12 hours</option>
-        <option value="1d">Last day</option>
-        <option value="2d">Last 2 days</option>
-        <option value="3d">Last 3 days</option>
-        <option value="4d">Last 4 days</option>
-        <option value="5d">Last 5 days</option>
-        <option value="7d">Last week</option>
-      </select>
-    `;
-    timeframeDiv.style.marginBottom = "1rem";
-    convoDiv.appendChild(timeframeDiv);
-
-    const summaryDiv = document.createElement("div")
-    summaryDiv.className = "summary"
-    summaryDiv.textContent = summary
-    convoDiv.appendChild(summaryDiv)
-
-    const windowBackSelect = timeframeDiv.querySelector("#window-back");
-    if (windowBackSelect) {
-      windowBackSelect.value = windowVal;
-      windowBackSelect.addEventListener("change", () => {
-        const summaryDiv = convoDiv.querySelector('.summary');
-        if (summaryDiv) summaryDiv.textContent = '';
-        fetchReplies();
-      });
-    }
-
-        const suggDiv = document.getElementById("suggestions")
-        suggDiv.innerHTML = ""
-        for (const reply of replies) {
-            const div = document.createElement("div")
-            div.className = "reply"
-            div.textContent = reply
-            div.onclick = () => navigator.clipboard.writeText(reply)
-            suggDiv.appendChild(div)
-        }
-        suggDiv.innerHTML += '<div class="loading-indicator" style="display: none;">Loaded</div>';
+        const convoDiv = document.getElementById("conversation");
+        // Only update the summary, not the timeframe controls
+        const summaryDiv = document.createElement("div");
+        summaryDiv.className = "summary";
+        summaryDiv.textContent = summary;
+        // Remove any existing summary
+        const oldSummary = convoDiv.querySelector('.summary');
+        if (oldSummary) oldSummary.remove();
+        convoDiv.appendChild(summaryDiv);
+        // Update message count
+        const countDiv = document.createElement("div");
+        countDiv.className = "message-count";
+        countDiv.textContent = `${messageCount} messages`;
+        convoDiv.appendChild(countDiv);
+        // Show replies
+        renderReplies(suggDiv, replies);
     } catch (error) {
-        const suggDiv = document.getElementById("suggestions");
         if (suggDiv) {
             suggDiv.innerHTML = '<div class="loading-indicator" style="color: red;">Failed to load replies.</div>';
         }
     }
 }
 
-fetchReplies()
+function renderReplies(suggDiv, replies) {
+    if (!suggDiv) return;
+    suggDiv.innerHTML = "";
+    const maxVisible = 2;
+    const visibleReplies = replies.slice(0, maxVisible);
+    const hiddenReplies = replies.slice(maxVisible);
+    for (const reply of visibleReplies) {
+        suggDiv.appendChild(createReplyDiv(reply, suggDiv));
+    }
+    if (hiddenReplies.length > 0) {
+        const showMoreBtn = document.createElement("button");
+        showMoreBtn.textContent = `Show ${hiddenReplies.length} more repl${hiddenReplies.length === 1 ? 'y' : 'ies'}`;
+        showMoreBtn.className = "show-more-replies";
+        showMoreBtn.style.marginTop = "0.5rem";
+        showMoreBtn.onclick = () => {
+            for (const reply of hiddenReplies) {
+                suggDiv.appendChild(createReplyDiv(reply, suggDiv));
+            }
+            showMoreBtn.remove();
+        };
+        suggDiv.appendChild(showMoreBtn);
+    }
+}
+
+function createReplyDiv(reply, suggDiv) {
+    const div = document.createElement("div");
+    div.className = "reply";
+    div.textContent = reply;
+    div.tabIndex = 0;
+    div.onclick = () => showReplyTextarea(reply, div, suggDiv);
+    return div;
+}
+
+function showReplyTextarea(reply, div, suggDiv) {
+    const computed = window.getComputedStyle(div);
+    const lineCount = (reply.match(/\n/g) || []).length + 1;
+    const textarea = document.createElement("textarea");
+    textarea.value = reply;
+    textarea.className = "reply-edit";
+    textarea.style.boxSizing = "border-box";
+    textarea.rows = lineCount;
+    textarea.style.font = computed.font;
+    textarea.style.padding = computed.padding;
+    textarea.style.borderRadius = computed.borderRadius;
+    textarea.style.border = computed.border;
+    textarea.style.marginRight = "0.5rem";
+    textarea.style.resize = "vertical";
+    textarea.style.minWidth = '200px';
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+    textarea.oninput = function() {
+        this.style.height = 'auto';
+        this.style.height = `${this.scrollHeight}px`;
+    };
+    const copyBtn = createCopyButton(() => textarea.value);
+    textarea.onblur = () => revertToDiv(textarea.value, div, suggDiv);
+    textarea.onkeydown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            revertToDiv(textarea.value, div, suggDiv);
+        }
+    };
+    div.innerHTML = "";
+    div.append(textarea, copyBtn);
+    textarea.focus();
+}
+
+fetchReplies();
