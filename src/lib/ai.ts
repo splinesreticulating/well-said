@@ -27,9 +27,19 @@ export const getSuggestedReplies = async (
         const khojRes = await fetch(KHOJ_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: prompt }),
+            body: JSON.stringify({ q: prompt }),
         })
-        if (!khojRes.ok) throw new Error(`Khoj API error: ${khojRes.status}`)
+        if (!khojRes.ok) {
+            let errorBody
+            try {
+                errorBody = await khojRes.text()
+            } catch (e) {
+                errorBody = "(could not read body)"
+            }
+            // Only log the status and the first 500 characters of the error body
+            console.error(`Khoj API error: ${khojRes.status} - ${errorBody.slice(0, 500)}`)
+            throw new Error(`Khoj API error: ${khojRes.status}`)
+        }
         const khojData = await khojRes.json()
         // Khoj returns { response: "..." }
         const rawOutput = khojData.response || ""
