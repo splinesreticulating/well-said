@@ -31,6 +31,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })
 
+// Helper to revert input back to display div
+function revertToDiv(val, div, suggDiv) {
+    div.innerHTML = "";
+    div.textContent = val;
+    div.tabIndex = 0;
+    div.onclick = () => {
+        // Replace with input and copy button
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = val;
+        input.className = "reply-edit";
+        input.style.width = "80%";
+        input.style.marginRight = "0.5rem";
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = "Copy";
+        copyBtn.className = "copy-btn";
+        copyBtn.onclick = (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(input.value);
+        };
+        input.onblur = () => {
+            revertToDiv(input.value, div, suggDiv);
+        };
+        input.onkeydown = (e) => {
+            if (e.key === "Enter") {
+                revertToDiv(input.value, div, suggDiv);
+            }
+        };
+        div.innerHTML = "";
+        div.appendChild(input);
+        div.appendChild(copyBtn);
+        input.focus();
+    };
+}
+
 async function fetchReplies() {
     const suggDiv = document.getElementById("suggestions")
     if (suggDiv) {
@@ -92,7 +127,56 @@ async function fetchReplies() {
             const div = document.createElement("div");
             div.className = "reply";
             div.textContent = reply;
-            div.onclick = () => navigator.clipboard.writeText(reply);
+            div.tabIndex = 0;
+            div.onclick = () => {
+                // Get computed style of the div for sizing
+                const computed = window.getComputedStyle(div);
+                // Calculate rows based on line breaks in reply text
+                const lineCount = (reply.match(/\n/g) || []).length + 1;
+                // Create textarea
+                const textarea = document.createElement("textarea");
+                textarea.value = reply;
+                textarea.className = "reply-edit";
+                textarea.style.boxSizing = "border-box";
+                textarea.rows = lineCount;
+                textarea.style.font = computed.font;
+                textarea.style.padding = computed.padding;
+                textarea.style.borderRadius = computed.borderRadius;
+                textarea.style.border = computed.border;
+                textarea.style.marginRight = "0.5rem";
+                textarea.style.resize = "vertical";
+                // Let browser auto-size width, but set minWidth for aesthetics
+                textarea.style.minWidth = '200px';
+                // Initial resize: auto height for content
+                textarea.style.height = 'auto';
+                textarea.style.height = `${textarea.scrollHeight}px`;
+                textarea.oninput = function() {
+                    this.style.height = 'auto';
+                    this.style.height = `${this.scrollHeight}px`;
+                };
+
+                const copyBtn = document.createElement("button");
+                copyBtn.textContent = "Copy";
+                copyBtn.className = "copy-btn";
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(`${textarea.value}`);
+                };
+                // Save on blur or Enter
+                textarea.onblur = () => {
+                    revertToDiv(textarea.value, div, suggDiv);
+                };
+                textarea.onkeydown = (e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        revertToDiv(textarea.value, div, suggDiv);
+                    }
+                };
+                div.innerHTML = "";
+                div.appendChild(textarea);
+                div.appendChild(copyBtn);
+                textarea.focus();
+            };
             suggDiv.appendChild(div);
         }
 
