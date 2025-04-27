@@ -125,7 +125,7 @@ async function fetchReplies() {
 function renderReplies(suggDiv, replies) {
     if (!suggDiv) return;
     suggDiv.innerHTML = "";
-    const maxVisible = 5;
+    const maxVisible = 2;
     const visibleReplies = replies.slice(0, maxVisible);
     const hiddenReplies = replies.slice(maxVisible);
     for (const reply of visibleReplies) {
