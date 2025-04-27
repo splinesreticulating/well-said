@@ -30,7 +30,7 @@ export const getSuggestedReplies = async (
             body: JSON.stringify({ q: prompt }),
         })
         if (!khojRes.ok) {
-            let errorBody
+            let errorBody: string
             try {
                 errorBody = await khojRes.text()
             } catch (e) {
@@ -43,10 +43,20 @@ export const getSuggestedReplies = async (
         const khojData = await khojRes.json()
         // Khoj returns { response: "..." }
         const rawOutput = khojData.response || ""
-        const summaryMatch = rawOutput.match(/Summary:\s*([\s\S]*?)(?=\n\n|$)/)
-        const summary = summaryMatch ? summaryMatch[1].trim() : ""
-        const replyMatches = [...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g)]
-        const replies = replyMatches.map((m) => m[1].trim())
+        console.log("Khoj raw output:", rawOutput)
+        // Extract summary as everything before the first reply
+        const summary = rawOutput.split(/\*\*Reply 1:\*\*|Reply 1:/)[0].trim()
+        // Match both '**Reply 1:**' and 'Reply 1:'
+        const replyMatches = [
+            ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
+            ...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g),
+        ]
+        const replies = replyMatches.map((m) => m[1]
+            .replace(/^\*+\s*/, "")    // Remove leading asterisks and spaces
+            .replace(/^"/, "")           // Remove leading quote
+            .replace(/"$/, "")           // Remove trailing quote
+            .trim()
+        )
         return { summary, replies }
     } catch (err) {
         console.error("Error generating replies:", err)
