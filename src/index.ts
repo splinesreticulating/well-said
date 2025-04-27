@@ -18,6 +18,15 @@ app.post("/replies", async (req, res) => {
 
     try {
         const messages = await getRecentMessages(startDate, endDate)
+        if (!messages || messages.length === 0) {
+            res.json({
+                summary: "",
+                replies: [],
+                messageCount: 0,
+                info: "No messages to summarize."
+            })
+            return
+        }
         const { summary, replies, messageCount } = await getSuggestedReplies(
             messages,
             tone || "gentle",

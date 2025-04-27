@@ -21,11 +21,12 @@ ${context}
 Here are the partner's messages:
 ${formattedMessages}
 
-Provide a brief summary of what your partner said above in 1–2 sentences.
+Please summarize each thought and feeling.
+
+Based on that summary, what should they say next?
 
 Tone: ${tone}
 
-Based on that summary, what should they say next?
 Suggest 2–3 short, natural replies that the user might send. Keep it emotionally intelligent, casual, and in their voice — clear, calm, and warm. Avoid generic phrases like “Thank you for sharing that with me.” It's okay to be playful if it fits. Don't sound robotic.
 
 Reply 1:
