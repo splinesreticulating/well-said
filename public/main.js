@@ -62,53 +62,64 @@ async function fetchReplies() {
 
         const { summary, replies } = await res.json()
 
-        const convoDiv = document.getElementById("conversation")
-        convoDiv.innerHTML = ""
-        const timeframeDiv = document.createElement("div")
-        timeframeDiv.className = "timeframe-controls"
-        timeframeDiv.innerHTML = `
-      <label for="window-back"><strong>Summarize messages from:</strong></label>
-      <select id="window-back" name="window-back">
-        <option value="1h">Last hour</option>
-        <option value="6h">Last 6 hours</option>
-        <option value="12h">Last 12 hours</option>
-        <option value="1d">Last day</option>
-        <option value="2d">Last 2 days</option>
-        <option value="3d">Last 3 days</option>
-        <option value="4d">Last 4 days</option>
-        <option value="5d">Last 5 days</option>
-        <option value="7d">Last week</option>
-      </select>
-    `
-        timeframeDiv.style.marginBottom = "1rem"
-        convoDiv.appendChild(timeframeDiv)
-
-        const summaryDiv = document.createElement("div")
-        summaryDiv.className = "summary"
-        summaryDiv.textContent = summary
-        convoDiv.appendChild(summaryDiv)
-
-        const windowBackSelect = timeframeDiv.querySelector("#window-back")
+        const convoDiv = document.getElementById("conversation");
+        // Only update the summary, not the timeframe controls
+        const summaryDiv = document.createElement("div");
+        summaryDiv.className = "summary";
+        summaryDiv.textContent = summary;
+        // Remove any existing summary
+        const oldSummary = convoDiv.querySelector('.summary');
+        if (oldSummary) oldSummary.remove();
+        convoDiv.appendChild(summaryDiv);
+        // Set window-back select to correct value
+        const windowBackSelect = document.getElementById("window-back");
         if (windowBackSelect) {
-            windowBackSelect.value = windowVal
-            windowBackSelect.addEventListener("change", () => {
-                const summaryDiv = convoDiv.querySelector(".summary")
-                if (summaryDiv) summaryDiv.textContent = ""
-                fetchReplies()
-            })
+            windowBackSelect.value = windowVal;
+            windowBackSelect.onchange = () => {
+                summaryDiv.textContent = "";
+                fetchReplies();
+            };
         }
 
         const suggDiv = document.getElementById("suggestions")
         suggDiv.innerHTML = ""
-        for (const reply of replies) {
-            const div = document.createElement("div")
-            div.className = "reply"
-            div.textContent = reply
-            div.onclick = () => navigator.clipboard.writeText(reply)
-            suggDiv.appendChild(div)
+        // Show only the first 3 replies by default
+        const maxVisible = 3;
+        const visibleReplies = replies.slice(0, maxVisible);
+        const hiddenReplies = replies.slice(maxVisible);
+
+        for (const reply of visibleReplies) {
+            const div = document.createElement("div");
+            div.className = "reply";
+            div.textContent = reply;
+            div.onclick = () => navigator.clipboard.writeText(reply);
+            suggDiv.appendChild(div);
         }
-        suggDiv.innerHTML +=
-            '<div class="loading-indicator" style="display: none;">Loaded</div>'
+
+        if (hiddenReplies.length > 0) {
+            const showMoreBtn = document.createElement("button");
+            showMoreBtn.textContent = `Show ${hiddenReplies.length} more repl${hiddenReplies.length === 1 ? 'y' : 'ies'}`;
+            showMoreBtn.className = "show-more-replies";
+            showMoreBtn.style.marginTop = "0.5rem";
+            showMoreBtn.onclick = () => {
+                for (const reply of hiddenReplies) {
+                    const div = document.createElement("div");
+                    div.className = "reply";
+                    div.textContent = reply;
+                    div.onclick = () => navigator.clipboard.writeText(reply);
+                    suggDiv.appendChild(div);
+                }
+                showMoreBtn.remove();
+            };
+            suggDiv.appendChild(showMoreBtn);
+        }
+
+        // Add the loading indicator as a DOM element instead of using innerHTML (to avoid overwriting button)
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "loading-indicator";
+        loadingDiv.style.display = "none";
+        loadingDiv.textContent = "Loaded";
+        suggDiv.appendChild(loadingDiv);
     } catch (error) {
         const suggDiv = document.getElementById("suggestions")
         if (suggDiv) {
