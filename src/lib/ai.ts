@@ -43,7 +43,6 @@ export const getSuggestedReplies = async (
         const khojData = await khojRes.json()
         // Khoj returns { response: "..." }
         const rawOutput = khojData.response || ""
-        console.log("Khoj raw output:", rawOutput)
         // Extract summary as everything before the first reply
         const summary = rawOutput.split(/\*\*Reply 1:\*\*|Reply 1:/)[0].trim()
         // Match both '**Reply 1:**' and 'Reply 1:'

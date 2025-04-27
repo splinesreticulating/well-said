@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchReplies() {
     const suggDiv = document.getElementById("suggestions")
     if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator">Loading...</div>'
+        suggDiv.innerHTML = '<div class="loading-indicator spinner"></div>'
     }
     const tone = document.getElementById("tone-select")?.value || "gentle"
     const context = document.getElementById("context-input")?.value || ""
