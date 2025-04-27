@@ -48,7 +48,7 @@ async function fetchReplies() {
         const days = Number.parseInt(windowVal)
         start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
     } else {
-        // fallback: default to shortest window
+        // default to shortest window
         start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)
     }
     const startDate = start.toISOString()
