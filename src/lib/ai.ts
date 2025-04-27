@@ -10,7 +10,7 @@ export const getSuggestedReplies = async (
     messages: Message[],
     tone: string,
     context: string,
-): Promise<{ summary: string; replies: string[] }> => {
+): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
     const recentText = messages.map((m) => {
         const tag =
             m.sender === "me"
@@ -56,12 +56,13 @@ export const getSuggestedReplies = async (
             .replace(/"$/, "")           // Remove trailing quote
             .trim()
         )
-        return { summary, replies }
+        return { summary, replies, messageCount: messages.length }
     } catch (err) {
         console.error("Error generating replies:", err)
         return {
             summary: "",
             replies: ["(Sorry, I had trouble generating a response.)"],
+            messageCount: messages.length,
         }
     }
 }

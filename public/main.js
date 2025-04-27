@@ -71,6 +71,14 @@ async function fetchReplies() {
     if (suggDiv) {
         suggDiv.innerHTML = '<div class="loading-indicator spinner"></div>'
     }
+    // Remove summary and count when loading
+    const convoDiv = document.getElementById("conversation");
+    if (convoDiv) {
+        const oldSummary = convoDiv.querySelector('.summary');
+        if (oldSummary) oldSummary.remove();
+        const oldCount = convoDiv.querySelector('.message-count');
+        if (oldCount) oldCount.remove();
+    }
     const tone = document.getElementById("tone-select")?.value || "gentle"
     const context = document.getElementById("context-input")?.value || ""
     const windowVal = document.getElementById("window-back")?.value || "3d"
@@ -95,7 +103,7 @@ async function fetchReplies() {
             body: JSON.stringify({ tone, context, startDate }),
         })
 
-        const { summary, replies } = await res.json()
+        const { summary, replies, messageCount } = await res.json()
 
         const convoDiv = document.getElementById("conversation");
         // Only update the summary, not the timeframe controls
@@ -106,6 +114,22 @@ async function fetchReplies() {
         const oldSummary = convoDiv.querySelector('.summary');
         if (oldSummary) oldSummary.remove();
         convoDiv.appendChild(summaryDiv);
+        // Only show message count if summary is non-empty
+        let countDiv = convoDiv.querySelector('.message-count');
+        if (summary && summary.trim().length > 0) {
+            if (!countDiv) {
+                countDiv = document.createElement('div');
+                countDiv.className = 'message-count';
+                countDiv.style.fontSize = '0.95em';
+                countDiv.style.color = '#555';
+                countDiv.style.marginBottom = '0.25rem';
+            }
+            const safeCount = (typeof messageCount === 'number' && !Number.isNaN(messageCount)) ? messageCount : 0;
+            countDiv.textContent = `- Summarized ${safeCount} message${safeCount === 1 ? '' : 's'}`;
+            convoDiv.appendChild(countDiv);
+        } else if (countDiv) {
+            countDiv.remove();
+        }
         // Set window-back select to correct value
         const windowBackSelect = document.getElementById("window-back");
         if (windowBackSelect) {
