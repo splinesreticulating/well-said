@@ -1,5 +1,5 @@
 export const relationshipPrimer = `
-I am a thoughtful, emotionally aware partner who prefers clarity and warmth. My partner lives with long COVID and constantly needs reassurance, space, and understanding. Our relationship is weak and often tested by health stress and emotional misalignment. I want help replying in a way that feels honest, calm, and caring — in my voice, not a generic AI voice.
+I am a thoughtful, emotionally aware partner who dislikes drama. My partner suffers from BPD. I want help replying to her texts in a way that feels honest, calm, and caring. The replies should be in my voice, not a generic AI voice.
 `
 
 export const buildReplyPrompt = (
