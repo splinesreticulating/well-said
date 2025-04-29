@@ -2,8 +2,8 @@
 const $ = (id) => document.getElementById(id);
 const on = (el, event, handler) => el?.addEventListener(event, handler);
 
-const saveContext = (val) => localStorage.setItem("wellsaid_context", val);
-const loadContext = () => localStorage.getItem("wellsaid_context") || "";
+const saveContext = (val) => localStorage.setItem("well-said_context", val);
+const loadContext = () => localStorage.getItem("well-said_context") || "";
 
 const setupInputPersistence = () => {
     const contextInput = $("context-input");

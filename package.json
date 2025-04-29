@@ -1,5 +1,5 @@
 {
-    "name": "wellsaid",
+    "name": "well-said",
     "version": "1.0.0",
     "scripts": {
         "dev": "ts-node src/index.ts",
