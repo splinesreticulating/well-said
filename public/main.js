@@ -24,6 +24,10 @@ const setupSelectRefresh = () => {
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
     setupSelectRefresh();
+    const regenBtn = document.getElementById("regenerate-btn");
+    if (regenBtn) {
+        regenBtn.addEventListener("click", fetchReplies);
+    }
 });
 
 // Helper to revert input back to display div
