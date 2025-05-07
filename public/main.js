@@ -15,9 +15,14 @@ const setupInputPersistence = () => {
 };
 
 const setupSelectRefresh = () => {
-    for (const id of ["tone-select", "window-back"]) {
-        const el = $(id);
-        on(el, "change", fetchReplies);
+    // Listen for changes to the "window-back" select
+    const windowBackEl = $("window-back");
+    on(windowBackEl, "change", fetchReplies);
+
+    // Listen for changes to the tone radio group
+    const toneRadios = document.querySelectorAll('input[name="tone"]');
+    for (const radio of toneRadios) {
+        radio.addEventListener('change', fetchReplies);
     }
 };
 
@@ -77,7 +82,9 @@ async function fetchReplies() {
         const oldCount = convoDiv.querySelector('.message-count');
         if (oldCount) oldCount.remove();
     }
-    const tone = document.getElementById("tone-select")?.value || "gentle"
+    // Get selected tone from radio buttons
+    const toneRadio = document.querySelector('input[name="tone"]:checked');
+    const tone = toneRadio ? toneRadio.value : "gentle";
     const context = document.getElementById("context-input")?.value || ""
     const windowVal = document.getElementById("window-back")?.value || "3d"
     const now = new Date()
