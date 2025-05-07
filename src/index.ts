@@ -11,6 +11,7 @@ const PORT = 3000
 
 app.use(cors())
 app.use(express.static("public"))
+app.use("/dist", express.static("dist"))
 app.use(express.json())
 
 app.post("/replies", async (req, res) => {
