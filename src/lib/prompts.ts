@@ -8,21 +8,16 @@ export const buildReplyPrompt = (
         .join("\n")
 
     return `
-Here are my partner's message(s):
+Here are some messages:
 ${formattedMessages}
-
-Please summarize them for me.
-
-Suggest 2–3 short, natural replies that the user might send.
-
+Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
+Suggest 3 replies that I might send.
 Tone: ${tone}
-
-Additional context if any: ${context}
-
+${context ? `
+Additional context: ${context}
+` : ''}
 Reply 1:
- 
 Reply 2:
- 
 Reply 3:
 `
 }
