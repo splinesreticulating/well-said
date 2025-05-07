@@ -68,10 +68,89 @@ export const getSuggestedReplies = async (
 }
 
 function parseSummaryToHumanReadable(rawOutput: string) {
-    // Return everything before the second double line break (two consecutive newlines)
-    const parts = rawOutput.split(/\r?\n\s*\r?\n/);
-    let summary = (parts[0] || '').trim();
-    // Remove leading markdown heading like '**Summary:**' (with or without colon)
-    summary = summary.replace(/^\*\*Summary:?\*\*\s*/i, '');
-    return summary.trim();
+    // Extract the summary from the raw output
+    // The summary is everything before the "----" marker
+    
+    // Find where the replies section starts with the consistent marker
+    const marker = "---";
+    const summaryEndIndex = rawOutput.indexOf(marker);
+    
+    // Extract the summary
+    const summary = rawOutput.substring(0, summaryEndIndex).trim();
+    return cleanupSummary(summary);
+}
+
+// Helper function to clean up the summary text
+function cleanupSummary(text: string): string {
+    if (!text) {
+        return "(No summary available)";
+    }
+    
+    // Remove "**Brief Summary:**" or similar patterns
+    let cleaned = text;
+    
+    // Remove any variation of the Brief Summary prefix with or without asterisks
+    cleaned = cleaned.replace(/^\s*\*{0,2}\s*Brief Summary:\s*\*{0,2}\s*/i, "");
+    
+    // Also remove any remaining leading asterisks
+    cleaned = cleaned.replace(/^\s*\*+\s*/, "");
+    
+    // Split the text into narrative and structured sections
+    let mainNarrative = cleaned;
+    let structuredSections = "";
+    
+    // Extract structured sections if they exist
+    const sectionMarkers = [
+        "Main Topics:", "**Main Topics:**", 
+        "Emotional Tone:", "**Emotional Tone:**", 
+        "Changes in mood:", "**Changes in mood:**"
+    ];
+    
+    // Find the earliest section marker
+    let earliestIndex = cleaned.length;
+    let foundMarker = false;
+    
+    for (const marker of sectionMarkers) {
+        const index = cleaned.indexOf(marker);
+        if (index !== -1 && index < earliestIndex) {
+            earliestIndex = index;
+            foundMarker = true;
+        }
+    }
+    
+    if (foundMarker) {
+        // Split the text at the earliest section marker
+        mainNarrative = cleaned.substring(0, earliestIndex).trim();
+        structuredSections = cleaned.substring(earliestIndex).trim();
+    }
+    
+    // Add paragraph breaks to the main narrative
+    // Look for sentences that might indicate topic changes
+    mainNarrative = mainNarrative
+        .replace(/\. The conversation/g, ".\n\nThe conversation")
+        .replace(/\. The discussion/g, ".\n\nThe discussion")
+        .replace(/\. The mood/g, ".\n\nThe mood")
+        .replace(/\. You try/g, ".\n\nYou try")
+        .replace(/\. Your partner/g, ".\n\nYour partner");
+    
+    // Format structured sections
+    if (structuredSections) {
+        // Format section headers to be cleaner
+        structuredSections = structuredSections.replace(/\*\*([^*]+):\*\*/g, "$1:");
+        
+        // Add spacing before section headers
+        for (const marker of sectionMarkers) {
+            structuredSections = structuredSections.replace(marker, `\n\n${marker}`);
+        }
+        
+        // Format bullet points properly
+        structuredSections = structuredSections.replace(/(?<!\n)\s*-\s*/g, "\n- ");
+        structuredSections = structuredSections.replace(/\n\n-/g, "\n-");
+    }
+    
+    // Combine the formatted parts
+    const result = mainNarrative + (structuredSections ? `\n\n${structuredSections}` : "");
+    
+    // Clean up any excessive whitespace
+    return result.replace(/\n{3,}/g, "\n\n").trim() || "(No summary available)";
 }
