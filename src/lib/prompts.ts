@@ -19,8 +19,12 @@ Tone: ${tone}
 
 Additional context if any: ${context}
 
-Suggest a short, natural reply that the user might send.
-
-Reply:
+Suggest 2–3 short, natural replies that the user might send.
+ 
+Reply 1:
+ 
+Reply 2:
+ 
+Reply 3:
 `
 }
