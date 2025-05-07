@@ -154,7 +154,7 @@ async function fetchReplies(): Promise<void> {
         const summaryDiv = document.createElement("div");
     
         summaryDiv.className = "summary";
-        summaryDiv.textContent = summary;
+        summaryDiv.innerHTML = summary; // Use innerHTML instead of textContent to render HTML
         // Remove any existing summary
         const oldSummary = convoDiv.querySelector('.summary');
     
