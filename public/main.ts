@@ -22,10 +22,6 @@ const setupInputPersistence = (): void => {
 };
 
 const setupSelectRefresh = (): void => {
-    // Listen for changes to the "window-back" select
-    const windowBackEl = $("window-back") as HTMLSelectElement | null;
-    on(windowBackEl, "change", fetchReplies);
-
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
     
@@ -37,9 +33,6 @@ const setupSelectRefresh = (): void => {
                 label.classList.remove('active');
             }
             ((e.target as HTMLElement).closest('label') as HTMLElement).classList.add('active');
-            
-            // Fetch new replies
-            fetchReplies();
         });
     }
 };
@@ -48,10 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
     setupSelectRefresh();
 
-    const regenBtn = document.getElementById("regenerate-btn");
+    const goBtn = document.getElementById("go-btn");
     
-    if (regenBtn) {
-        regenBtn.addEventListener("click", fetchReplies);
+    if (goBtn) {
+        goBtn.addEventListener("click", fetchReplies);
     }
 });
 
@@ -239,4 +232,4 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     textarea.focus();
 }
 
-fetchReplies();
+// API calls will now only happen when the Go button is clicked
