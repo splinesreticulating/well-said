@@ -12,44 +12,46 @@
 <body>
   <h1>WellSaid</h1>
 
-  <div class="timeframe-controls">
-    <label for="window-back"><strong>Summarize messages from:</strong></label>
-    <select id="window-back" name="window-back">
-      <option value="1h">Last hour</option>
-      <option value="6h">Last 6 hours</option>
-      <option value="12h">Last 12 hours</option>
-      <option value="1d">Last day</option>
-      <option value="2d">Last 2 days</option>
-      <option value="3d">Last 3 days</option>
-      <option value="4d">Last 4 days</option>
-      <option value="5d">Last 5 days</option>
-      <option value="7d">Last week</option>
-    </select>
-    <button id="go-btn">Go</button>
-  </div>
-
-  <div id="conversation" class="conversation"></div>
-
-  <h2>Suggested Replies</h2>
-  <div>
-    <span style="font-weight: bold; margin: 0.3rem 0 0.5rem 0; display: block;">Tone:</span>
-    <div id="tone-radio-group" class="radio-group">
-      <label class="active"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
-      <label><input type="radio" name="tone" value="honest"> Honest</label>
-      <label><input type="radio" name="tone" value="funny"> Funny</label>
-      <label><input type="radio" name="tone" value="reassuring"> Reassuring</label>
-      <label><input type="radio" name="tone" value="concise"> Concise</label>
+  <div class="content-container">
+    <div class="timeframe-controls">
+      <label for="window-back"><strong>Summarize messages from:</strong></label>
+      <select id="window-back" name="window-back">
+        <option value="1h">Last hour</option>
+        <option value="6h">Last 6 hours</option>
+        <option value="12h">Last 12 hours</option>
+        <option value="1d">Last day</option>
+        <option value="2d">Last 2 days</option>
+        <option value="3d">Last 3 days</option>
+        <option value="4d">Last 4 days</option>
+        <option value="5d">Last 5 days</option>
+        <option value="7d">Last week</option>
+      </select>
+      <button id="go-btn">Go</button>
     </div>
-  </div>
-  <div id="suggestions" class="suggestions"></div>
 
-  <details id="context-details">
-    <summary><strong>More context</strong></summary>
-    <textarea id="context-input" rows="4"></textarea>
-    <div class="context-hint">
-      Anything else AI should know about?
+    <div id="conversation" class="conversation"></div>
+
+    <h2>Suggested Replies</h2>
+    <div>
+      <span style="font-weight: bold; margin: 0.3rem 0 0.5rem 0; display: block;">Tone:</span>
+      <div id="tone-radio-group" class="radio-group">
+        <label class="active"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
+        <label><input type="radio" name="tone" value="honest"> Honest</label>
+        <label><input type="radio" name="tone" value="funny"> Funny</label>
+        <label><input type="radio" name="tone" value="reassuring"> Reassuring</label>
+        <label><input type="radio" name="tone" value="concise"> Concise</label>
+      </div>
     </div>
-  </details>
+    <div id="suggestions" class="suggestions"></div>
+
+    <details id="context-details">
+      <summary><strong>More context</strong></summary>
+      <textarea id="context-input" rows="4"></textarea>
+      <div class="context-hint">
+        Anything else AI should know about?
+      </div>
+    </details>
+  </div>
   <script src="../dist/public/main.js"></script>
 </body>
 </html>
