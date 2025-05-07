@@ -82,7 +82,7 @@ function createCopyButton(getValue) {
 async function fetchReplies() {
     const suggDiv = document.getElementById("suggestions")
     if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator spinner"></div>'
+        suggDiv.innerHTML = '<div class="loading-indicator">🧠</div>'
     }
     // Remove summary and count when loading
     const convoDiv = document.getElementById("conversation");
@@ -138,7 +138,7 @@ async function fetchReplies() {
         renderReplies(suggDiv, replies);
     } catch (error) {
         if (suggDiv) {
-            suggDiv.innerHTML = '<div class="loading-indicator" style="color: red;">Failed to load replies.</div>';
+            suggDiv.innerHTML = '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>';
         }
     }
 }
