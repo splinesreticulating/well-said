@@ -129,24 +129,10 @@ async function fetchReplies() {
 function renderReplies(suggDiv, replies) {
     if (!suggDiv) return;
     suggDiv.innerHTML = "";
-    const maxVisible = 2;
-    const visibleReplies = replies.slice(0, maxVisible);
-    const hiddenReplies = replies.slice(maxVisible);
-    for (const reply of visibleReplies) {
-        suggDiv.appendChild(createReplyDiv(reply, suggDiv));
-    }
-    if (hiddenReplies.length > 0) {
-        const showMoreBtn = document.createElement("button");
-        showMoreBtn.textContent = `Show ${hiddenReplies.length} more repl${hiddenReplies.length === 1 ? 'y' : 'ies'}`;
-        showMoreBtn.className = "show-more-replies";
-        showMoreBtn.style.marginTop = "0.5rem";
-        showMoreBtn.onclick = () => {
-            for (const reply of hiddenReplies) {
-                suggDiv.appendChild(createReplyDiv(reply, suggDiv));
-            }
-            showMoreBtn.remove();
-        };
-        suggDiv.appendChild(showMoreBtn);
+    for (const reply of replies) {
+        if (reply && reply.trim() !== "") {
+            suggDiv.appendChild(createReplyDiv(reply, suggDiv));
+        }
     }
 }
 
