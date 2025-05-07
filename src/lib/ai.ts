@@ -44,7 +44,7 @@ export const getSuggestedReplies = async (
         // Khoj returns { response: "..." }
         const rawOutput = khojData.response || ""
         // Extract summary as everything before the first reply
-        const summary = rawOutput.split(/\*\*Reply 1:\*\*|Reply 1:/)[0].trim()
+        const summary = parseSummaryToHumanReadable(rawOutput)
         // Match both '**Reply 1:**' and 'Reply 1:'
         const replyMatches = [
             ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
@@ -65,4 +65,13 @@ export const getSuggestedReplies = async (
             messageCount: messages.length,
         }
     }
+}
+
+function parseSummaryToHumanReadable(rawOutput: string) {
+    // Return everything before the second double line break (two consecutive newlines)
+    const parts = rawOutput.split(/\r?\n\s*\r?\n/);
+    let summary = (parts[0] || '').trim();
+    // Remove leading markdown heading like '**Summary:**' (with or without colon)
+    summary = summary.replace(/^\*\*Summary:?\*\*\s*/i, '');
+    return summary.trim();
 }
