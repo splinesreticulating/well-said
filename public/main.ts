@@ -12,8 +12,11 @@ const loadContext = (): string => localStorage.getItem("well-said_context") || "
 const setupInputPersistence = (): void => {
     const contextInput = $("context-input") as HTMLTextAreaElement | null;
     const contextDetails = $("context-details") as HTMLDetailsElement | null;
+
     if (!contextInput) return;
+
     contextInput.value = loadContext();
+    
     on(contextInput, "input", (e) => saveContext((e.target as HTMLTextAreaElement)?.value));
     on(contextInput, "focus", () => { if (contextDetails) contextDetails.open = true; });
 };
@@ -25,6 +28,7 @@ const setupSelectRefresh = (): void => {
 
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
+    
     for (const radio of toneRadios) {
         (radio as HTMLInputElement).addEventListener('change', (e) => {
             // Update active class for styling
@@ -43,7 +47,9 @@ const setupSelectRefresh = (): void => {
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
     setupSelectRefresh();
+
     const regenBtn = document.getElementById("regenerate-btn");
+    
     if (regenBtn) {
         regenBtn.addEventListener("click", fetchReplies);
     }
@@ -59,13 +65,17 @@ function revertToDiv(val: string, div: HTMLElement, suggDiv: HTMLElement): void 
 
 function showEditableInput(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
     div.innerHTML = "";
+    
     const input = document.createElement("input");
+    
     input.type = "text";
     input.value = val;
     input.className = "reply-edit";
     input.style.width = "80%";
     input.style.marginRight = "0.5rem";
+    
     const copyBtn = createCopyButton(() => input.value);
+    
     input.onblur = () => revertToDiv(input.value, div, suggDiv);
     input.onkeydown = (e) => { if (e.key === "Enter") revertToDiv(input.value, div, suggDiv); };
     div.append(input, copyBtn);
@@ -74,12 +84,14 @@ function showEditableInput(val: string, div: HTMLElement, suggDiv: HTMLElement):
 
 function createCopyButton(getValue: () => string): HTMLButtonElement {
     const btn = document.createElement("button");
+    
     btn.textContent = "Copy";
     btn.className = "copy-btn";
     btn.onclick = (e) => {
         e.stopPropagation();
         navigator.clipboard.writeText(getValue());
     };
+    
     return btn;
 }
 
@@ -91,14 +103,17 @@ interface ReplyResponse {
 
 async function fetchReplies(): Promise<void> {
     const suggDiv = document.getElementById("suggestions");
+    
     if (suggDiv) {
         suggDiv.innerHTML = '<div class="loading-indicator">🧠</div>';
     }
     // Remove summary and count when loading
     const convoDiv = document.getElementById("conversation");
+    
     if (convoDiv) {
         const oldSummary = convoDiv.querySelector('.summary');
         if (oldSummary) oldSummary.remove();
+    
         const oldCount = convoDiv.querySelector('.message-count');
         if (oldCount) oldCount.remove();
     }
@@ -109,6 +124,7 @@ async function fetchReplies(): Promise<void> {
     const windowVal = (document.getElementById("window-back") as HTMLSelectElement)?.value || "3d";
     const now = new Date();
     let start: Date;
+    
     if (windowVal.endsWith("h")) {
         const hours = Number.parseInt(windowVal);
         start = new Date(now.getTime() - hours * 60 * 60 * 1000);
@@ -119,6 +135,7 @@ async function fetchReplies(): Promise<void> {
         // default to shortest window
         start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
     }
+    
     const startDate = start.toISOString();
 
     try {
@@ -135,17 +152,21 @@ async function fetchReplies(): Promise<void> {
         
         // Only update the summary, not the timeframe controls
         const summaryDiv = document.createElement("div");
+    
         summaryDiv.className = "summary";
         summaryDiv.textContent = summary;
         // Remove any existing summary
         const oldSummary = convoDiv.querySelector('.summary');
+    
         if (oldSummary) oldSummary.remove();
         convoDiv.appendChild(summaryDiv);
         // Update message count
         const countDiv = document.createElement("div");
+    
         countDiv.className = "message-count";
         countDiv.textContent = `${messageCount} messages`;
         convoDiv.appendChild(countDiv);
+    
         // Show replies
         if (suggDiv) {
             renderReplies(suggDiv, replies);
@@ -159,7 +180,9 @@ async function fetchReplies(): Promise<void> {
 
 function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
     if (!suggDiv) return;
+    
     suggDiv.innerHTML = "";
+    
     for (const reply of replies) {
         if (reply && reply.trim() !== "") {
             suggDiv.appendChild(createReplyDiv(reply, suggDiv));
@@ -169,10 +192,12 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
 
 function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     const div = document.createElement("div");
+    
     div.className = "reply";
     div.textContent = reply;
     div.tabIndex = 0;
     div.onclick = () => showReplyTextarea(reply, div, suggDiv);
+    
     return div;
 }
 
@@ -180,6 +205,7 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     const computed = window.getComputedStyle(div);
     const lineCount = (reply.match(/\n/g) || []).length + 1;
     const textarea = document.createElement("textarea");
+    
     textarea.value = reply;
     textarea.className = "reply-edit";
     textarea.style.boxSizing = "border-box";
@@ -195,10 +221,12 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     textarea.style.height = `${textarea.scrollHeight}px`;
     textarea.oninput = (e: Event) => {
         const target = e.target as HTMLTextAreaElement;
+
         target.style.height = 'auto';
         target.style.height = `${target.scrollHeight}px`;
     };
     const copyBtn = createCopyButton(() => textarea.value);
+    
     textarea.onblur = () => revertToDiv(textarea.value, div, suggDiv);
     textarea.onkeydown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
