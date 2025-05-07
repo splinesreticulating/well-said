@@ -22,7 +22,17 @@ const setupSelectRefresh = () => {
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
     for (const radio of toneRadios) {
-        radio.addEventListener('change', fetchReplies);
+        radio.addEventListener('change', (e) => {
+            // Update active class for styling
+            const labels = document.querySelectorAll('#tone-radio-group label');
+            for (const label of labels) {
+                label.classList.remove('active');
+            }
+            e.target.closest('label').classList.add('active');
+            
+            // Fetch new replies
+            fetchReplies();
+        });
     }
 };
 
