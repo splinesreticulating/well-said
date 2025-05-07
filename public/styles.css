@@ -24,7 +24,7 @@ body {
 .content-container {
   background-color: #e0e0e0;
   border-radius: var(--border-radius);
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 700px;
   width: 100%;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -32,6 +32,18 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 1rem;
+    border-radius: 0;
+    max-width: 100%;
+  }
+  
+  body {
+    padding: 0;
+  }
 }
 
 
@@ -45,11 +57,26 @@ h1 {
   display: inline-block;
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+    margin: 1rem 0;
+  }
+}
+
 h2 {
   color: var(--secondary);
   margin: 1.5rem 0 1rem;
   font-size: 1.8rem;
   width: 650px;
+}
+
+@media (max-width: 768px) {
+  h2 {
+    width: 100%;
+    font-size: 1.5rem;
+    margin: 1rem 0 0.75rem;
+  }
 }
 
 .conversation {
@@ -60,6 +87,13 @@ h2 {
   border-radius: var(--border-radius);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .conversation {
+    width: 100%;
+    padding: 1rem;
+  }
 }
 .message {
   margin: 0.5rem 0;
@@ -121,6 +155,12 @@ h2 {
   gap: 0.75rem;
   width: 650px;
 }
+
+@media (max-width: 768px) {
+  .suggestions {
+    width: 100%;
+  }
+}
 .reply {
   background: white;
   border: 1px solid #e0e0e0;
@@ -129,6 +169,13 @@ h2 {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .reply {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
 }
 .reply:hover {
   background: var(--light);
@@ -145,6 +192,13 @@ details {
   width: 650px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  details {
+    width: 100%;
+    padding: 0.75rem 1rem 1rem;
+  }
 }
 
 details summary {
@@ -178,6 +232,20 @@ details summary:hover {
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   width: 650px;
+}
+
+@media (max-width: 768px) {
+  .radio-group {
+    width: 100%;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+  
+  .radio-group label {
+    flex: 1 0 45%;
+    margin-bottom: 0.5rem;
+    min-width: 120px;
+  }
 }
 
 .radio-group label {
@@ -245,6 +313,13 @@ select, textarea, button {
   transition: all 0.2s ease;
 }
 
+@media (max-width: 768px) {
+  select, textarea, button {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+  }
+}
+
 /* Specific styling for context textarea and its hint */
 #context-input {
   width: 100%;
@@ -288,6 +363,20 @@ button:hover {
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   width: 650px;
+}
+
+@media (max-width: 768px) {
+  .timeframe-controls {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .timeframe-controls select,
+  .timeframe-controls button {
+    width: 100%;
+  }
 }
 
 .timeframe-controls select {
