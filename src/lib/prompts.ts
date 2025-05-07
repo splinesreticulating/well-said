@@ -1,7 +1,3 @@
-export const relationshipPrimer = `
-I am a thoughtful, emotionally aware partner who dislikes drama. My partner suffers from BPD. I want help replying to her texts in a way that feels honest, calm, and caring. The replies should be in my voice, not a generic AI voice.
-`
-
 export const buildReplyPrompt = (
     messages: string[],
     tone: string,
@@ -12,13 +8,7 @@ export const buildReplyPrompt = (
         .join("\n")
 
     return `
-You are helping the user craft thoughtful, emotionally intelligent responses to messages from their partner.
-
-Keep in mind:
-
-${context}
-
-Here are the partner's messages:
+Here are my partner's message(s):
 ${formattedMessages}
 
 Please summarize each thought and feeling.
@@ -27,10 +17,10 @@ Based on that summary, what should they say next?
 
 Tone: ${tone}
 
-Suggest 2–3 short, natural replies that the user might send. Keep it emotionally intelligent, casual, and in their voice — clear, calm, and warm. Avoid generic phrases like “Thank you for sharing that with me.” It's okay to be playful if it fits. Don't sound robotic.
+Additional context if any: ${context}
 
-Reply 1:
-Reply 2:
-Reply 3:
+Suggest a short, natural reply that the user might send.
+
+Reply:
 `
 }
