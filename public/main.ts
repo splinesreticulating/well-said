@@ -268,9 +268,10 @@ function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     replyText.className = "reply-text";
     replyText.textContent = reply;
     
-    // Set up the copy button
-    copyBtn.textContent = "Copy";
+    // Set up the copy button with icon
+    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
     copyBtn.className = "copy-btn";
+    copyBtn.title = "Copy to clipboard";
     copyBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         
@@ -278,9 +279,11 @@ function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(reply)
                 .then(() => {
-                    copyBtn.textContent = "Copied!";
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    copyBtn.classList.add('copied');
                     setTimeout(() => {
-                        copyBtn.textContent = "Copy";
+                        copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                        copyBtn.classList.remove('copied');
                     }, 1500);
                 })
                 .catch(err => {
@@ -325,20 +328,26 @@ function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
                 document.body.removeChild(tempTextarea);
                 
                 if (successful) {
-                    copyBtn.textContent = "Copied!";
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    copyBtn.classList.add('copied');
                 } else {
-                    copyBtn.textContent = "Copy failed";
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                    copyBtn.classList.add('failed');
                 }
                 
                 setTimeout(() => {
-                    copyBtn.textContent = "Copy";
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                    copyBtn.classList.remove('copied');
+                    copyBtn.classList.remove('failed');
                 }, 1500);
                 
             } catch (err) {
                 console.error('Copy operation failed:', err);
-                copyBtn.textContent = "Copy failed";
+                copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                copyBtn.classList.add('failed');
                 setTimeout(() => {
-                    copyBtn.textContent = "Copy";
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                    copyBtn.classList.remove('failed');
                 }, 1500);
             }
         }
