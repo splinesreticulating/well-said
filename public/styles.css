@@ -212,7 +212,7 @@ h2 {
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  align-self: flex-start;
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
