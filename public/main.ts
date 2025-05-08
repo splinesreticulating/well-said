@@ -40,7 +40,6 @@ const setupSelectRefresh = (): void => {
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
     setupSelectRefresh();
-    setupTestCopyArea();
 
     const goBtn = document.getElementById("go-btn");
     
@@ -49,62 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Test copy functionality
-function setupTestCopyArea(): void {
-    const testCopyBtn = document.getElementById("test-copy-btn");
-    const testText = document.getElementById("test-text") as HTMLInputElement;
-    const copyStatus = document.getElementById("copy-status");
-    
-    if (testCopyBtn && testText && copyStatus) {
-        testCopyBtn.addEventListener("click", () => {
-            // Method 1: Using execCommand (older but widely supported)
-            try {
-                testText.select();
-                const success = document.execCommand("copy");
-                
-                if (success) {
-                    copyStatus.textContent = "✓ Copied using execCommand!";
-                    setTimeout(() => { copyStatus.textContent = ""; }, 2000);
-                } else {
-                    copyStatus.textContent = "✗ execCommand failed, trying Clipboard API...";
-                    copyStatus.style.color = "orange";
-                    
-                    // Try method 2 if method 1 fails
-                    copyWithClipboardAPI();
-                }
-            } catch (err) {
-                copyStatus.textContent = `✗ execCommand error: ${err}`;
-                copyStatus.style.color = "red";
-                
-                // Try method 2 if method 1 fails with error
-                copyWithClipboardAPI();
-            }
-        });
-    }
-    
-    // Method 2: Using Clipboard API (modern)
-    function copyWithClipboardAPI() {
-        if (navigator.clipboard && testText) {
-            navigator.clipboard.writeText(testText.value)
-                .then(() => {
-                    if (copyStatus) {
-                        copyStatus.textContent = "✓ Copied using Clipboard API!";
-                        copyStatus.style.color = "green";
-                        setTimeout(() => { copyStatus.textContent = ""; }, 2000);
-                    }
-                })
-                .catch(err => {
-                    if (copyStatus) {
-                        copyStatus.textContent = `✗ Both copy methods failed: ${err}`;
-                        copyStatus.style.color = "red";
-                    }
-                });
-        } else if (copyStatus) {
-            copyStatus.textContent = "✗ Clipboard API not available";
-            copyStatus.style.color = "red";
-        }
-    }
-}
+
 
 // Helper to revert input back to display div
 function revertToDiv(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
@@ -318,46 +262,9 @@ function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     return div;
 }
 
-// Simple function to create a debug overlay for logging
-function createDebugOverlay(): HTMLElement {
-    // Check if it already exists
-    let overlay = document.getElementById('debug-overlay');
-    if (overlay) return overlay;
-    
-    // Create overlay if it doesn't exist
-    overlay = document.createElement('div');
-    overlay.id = 'debug-overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.bottom = '10px';
-    overlay.style.right = '10px';
-    overlay.style.width = '300px';
-    overlay.style.maxHeight = '200px';
-    overlay.style.overflowY = 'auto';
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    overlay.style.color = 'white';
-    overlay.style.padding = '10px';
-    overlay.style.borderRadius = '5px';
-    overlay.style.fontFamily = 'monospace';
-    overlay.style.fontSize = '12px';
-    overlay.style.zIndex = '9999';
-    document.body.appendChild(overlay);
-    return overlay;
-}
 
-// Function to log debug messages
-function debugLog(message: string): void {
-    const overlay = createDebugOverlay();
-    const logEntry = document.createElement('div');
-    logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-    overlay.appendChild(logEntry);
-    // Scroll to bottom
-    overlay.scrollTop = overlay.scrollHeight;
-    // Also log to console
-    console.log(message);
-}
 
 function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElement): void {
-    debugLog('showReplyTextarea called');
     
     const computed = window.getComputedStyle(div);
     const lineCount = (reply.match(/\n/g) || []).length + 1;
@@ -387,102 +294,102 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     copyBtn.textContent = "Copy";
     copyBtn.className = "copy-btn";
     copyBtn.addEventListener("click", (e) => {
-        debugLog('Copy button clicked');
+
         e.stopPropagation();
         
         // Set the copying flag to prevent textarea from reverting
         isCopying = true;
-        debugLog('Set isCopying flag to true');
+
         
         // Log the textarea value
-        debugLog(`Textarea value: "${textarea.value.substring(0, 20)}${textarea.value.length > 20 ? '...' : ''}"`);
-        debugLog(`Textarea is focused: ${document.activeElement === textarea}`);
+
+
         
         // Focus and select the textarea
         textarea.focus();
         textarea.select();
-        debugLog(`After focus/select, textarea is focused: ${document.activeElement === textarea}`);
+
         
         try {
             // Execute the copy command
-            debugLog('Attempting execCommand("copy")');
+
             const successful = document.execCommand('copy');
-            debugLog(`execCommand result: ${successful}`);
+
             
             if (successful) {
-                debugLog('Copy successful via execCommand');
+
                 copyBtn.textContent = "Copied!";
                 setTimeout(() => {
                     copyBtn.textContent = "Copy";
                     // Reset the copying flag after the operation is complete
                     isCopying = false;
-                    debugLog('Reset isCopying flag to false');
+                
                     // Re-focus the textarea to allow continued editing
                     textarea.focus();
                 }, 1500);
             } else {
-                debugLog('execCommand returned false, trying Clipboard API');
+
                 if (navigator.clipboard) {
-                    debugLog('Clipboard API available, trying writeText');
+
                     navigator.clipboard.writeText(textarea.value)
                         .then(() => {
-                            debugLog('Clipboard API writeText succeeded');
+
                             copyBtn.textContent = "Copied!";
                             setTimeout(() => {
                                 copyBtn.textContent = "Copy";
                                 // Reset the copying flag after the operation is complete
                                 isCopying = false;
-                                debugLog('Reset isCopying flag to false');
+                            
                                 // Re-focus the textarea to allow continued editing
                                 textarea.focus();
                             }, 1500);
                         })
                         .catch(err => {
-                            debugLog(`Clipboard API failed: ${err}`);
+
                             // Reset the copying flag on error
                             isCopying = false;
-                            debugLog('Reset isCopying flag to false due to error');
+
                             // Re-focus the textarea to allow continued editing
                             textarea.focus();
                         });
                 } else {
-                    debugLog('Clipboard API not available');
+
                     // Reset the copying flag if API not available
                     isCopying = false;
-                    debugLog('Reset isCopying flag to false due to no API');
+
                     // Re-focus the textarea to allow continued editing
                     textarea.focus();
                 }
             }
         } catch (err) {
-            debugLog(`Copy operation error: ${err}`);
+
             if (navigator.clipboard) {
-                debugLog('Trying Clipboard API after error');
+
                 navigator.clipboard.writeText(textarea.value)
                     .then(() => {
-                        debugLog('Clipboard API succeeded after error');
+
                         copyBtn.textContent = "Copied!";
                         setTimeout(() => {
                             copyBtn.textContent = "Copy";
                             // Reset the copying flag after the operation is complete
                             isCopying = false;
-                            debugLog('Reset isCopying flag to false');
+                        
                             // Re-focus the textarea to allow continued editing
                             textarea.focus();
                         }, 1500);
                     })
                     .catch(err => {
-                        debugLog(`Clipboard API also failed: ${err}`);
+
                         // Reset the copying flag on error
                         isCopying = false;
-                        debugLog('Reset isCopying flag to false due to error');
+
                         // Re-focus the textarea to allow continued editing
                         textarea.focus();
                     });
             } else {
                 // Reset the copying flag if no API available
                 isCopying = false;
-                debugLog('Reset isCopying flag to false due to no API after error');
+
                 // Re-focus the textarea to allow continued editing
                 textarea.focus();
             }
@@ -493,28 +400,28 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     let isCopying = false;
     
     textarea.onblur = (e) => {
-        debugLog('Textarea blur event fired');
+
         
         // Don't revert if we're in the middle of a copy operation
         if (isCopying) {
-            debugLog('Ignoring blur during copy operation');
+
             return;
         }
         
         // Check if the related target is our copy button
         const relatedTarget = e.relatedTarget as HTMLElement;
         if (relatedTarget && relatedTarget.className === 'copy-btn') {
-            debugLog('Blur caused by copy button click, not reverting');
+
             // Don't revert when clicking the copy button
             return;
         }
         
-        debugLog('Reverting textarea to div');
+
         revertToDiv(textarea.value, div, suggDiv);
     };
     textarea.onkeydown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
-            debugLog('Enter pressed, reverting to div');
+
             e.preventDefault();
             revertToDiv(textarea.value, div, suggDiv);
         }
@@ -522,7 +429,7 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     
     div.innerHTML = "";
     div.append(textarea, copyBtn);
-    debugLog('Focusing textarea');
+
     textarea.focus();
 }
 
