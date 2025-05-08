@@ -89,9 +89,34 @@ function createCopyButton(getValue: () => string): HTMLButtonElement {
         // Get the text to copy
         const textToCopy = getValue();
         
+        // First try the Clipboard API (works better on mobile, especially iOS)
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    // Provide visual feedback
+                    const originalText = btn.textContent;
+                    btn.textContent = "Copied!";
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    // Fall back to execCommand method
+                    useExecCommand(textToCopy, btn);
+                });
+        } else {
+            // Fall back to execCommand method if Clipboard API isn't available
+            useExecCommand(textToCopy, btn);
+        }
+    });
+    
+    // Helper function for execCommand method (fallback)
+    function useExecCommand(text: string, button: HTMLButtonElement) {
         // Create a temporary textarea element
         const textArea = document.createElement('textarea');
-        textArea.value = textToCopy;
+        textArea.value = text;
         
         // Make it visible but out of the way
         textArea.style.position = 'fixed';
@@ -104,52 +129,56 @@ function createCopyButton(getValue: () => string): HTMLButtonElement {
         textArea.style.outline = 'none';
         textArea.style.boxShadow = 'none';
         textArea.style.background = 'transparent';
+        textArea.style.opacity = '0';
         
         document.body.appendChild(textArea);
         
-        // Critical steps: focus and select the text
-        textArea.focus();
-        textArea.select();
-        
         try {
+            // Critical steps for iOS: need to be visible and in the DOM
+            textArea.contentEditable = 'true';
+            textArea.readOnly = false;
+            
+            // Focus and select the text
+            textArea.focus();
+            textArea.select();
+            
+            // For iOS
+            const range = document.createRange();
+            range.selectNodeContents(textArea);
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+            textArea.setSelectionRange(0, text.length);
+            
             // Execute the copy command
             const successful = document.execCommand('copy');
             
             if (successful) {
                 // Provide visual feedback
-                const originalText = btn.textContent;
-                btn.textContent = "Copied!";
+                const originalText = button.textContent;
+                button.textContent = "Copied!";
                 
                 setTimeout(() => {
-                    btn.textContent = originalText;
+                    button.textContent = originalText;
                 }, 1500);
             } else {
                 console.error('execCommand returned false');
-                // Try clipboard API as fallback
-                useClipboardAPI(textToCopy, btn);
+                button.textContent = "Copy failed";
+                setTimeout(() => {
+                    button.textContent = "Copy";
+                }, 1500);
             }
         } catch (err) {
             console.error('Copy operation failed:', err);
-            // Try clipboard API as fallback
-            useClipboardAPI(textToCopy, btn);
+            button.textContent = "Copy failed";
+            setTimeout(() => {
+                button.textContent = "Copy";
+            }, 1500);
         } finally {
             // Clean up
             document.body.removeChild(textArea);
-        }
-    });
-    
-    // Helper function for Clipboard API
-    function useClipboardAPI(text: string, button: HTMLButtonElement) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    const originalText = button.textContent;
-                    button.textContent = "Copied!";
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                    }, 1500);
-                })
-                .catch(err => console.error('Clipboard API failed:', err));
         }
     }
     
@@ -294,104 +323,85 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
     copyBtn.textContent = "Copy";
     copyBtn.className = "copy-btn";
     copyBtn.addEventListener("click", (e) => {
-
         e.stopPropagation();
         
         // Set the copying flag to prevent textarea from reverting
         isCopying = true;
-
         
-        // Log the textarea value
-
-
-        
-        // Focus and select the textarea
-        textarea.focus();
-        textarea.select();
-
-        
-        try {
-            // Execute the copy command
-
-            const successful = document.execCommand('copy');
-
-            
-            if (successful) {
-
-                copyBtn.textContent = "Copied!";
-                setTimeout(() => {
-                    copyBtn.textContent = "Copy";
-                    // Reset the copying flag after the operation is complete
-                    isCopying = false;
-                
-                    // Re-focus the textarea to allow continued editing
-                    textarea.focus();
-                }, 1500);
-            } else {
-
-                if (navigator.clipboard) {
-
-                    navigator.clipboard.writeText(textarea.value)
-                        .then(() => {
-
-                            copyBtn.textContent = "Copied!";
-                            setTimeout(() => {
-                                copyBtn.textContent = "Copy";
-                                // Reset the copying flag after the operation is complete
-                                isCopying = false;
-                            
-                                // Re-focus the textarea to allow continued editing
-                                textarea.focus();
-                            }, 1500);
-                        })
-                        .catch(err => {
-
-                            // Reset the copying flag on error
-                            isCopying = false;
-
-                            // Re-focus the textarea to allow continued editing
-                            textarea.focus();
-                        });
-                } else {
-
-                    // Reset the copying flag if API not available
-                    isCopying = false;
-
-                    // Re-focus the textarea to allow continued editing
-                    textarea.focus();
-                }
-            }
-        } catch (err) {
-
-            if (navigator.clipboard) {
-
-                navigator.clipboard.writeText(textarea.value)
-                    .then(() => {
-
-                        copyBtn.textContent = "Copied!";
-                        setTimeout(() => {
-                            copyBtn.textContent = "Copy";
-                            // Reset the copying flag after the operation is complete
-                            isCopying = false;
-                        
-                            // Re-focus the textarea to allow continued editing
-                            textarea.focus();
-                        }, 1500);
-                    })
-                    .catch(err => {
-
-                        // Reset the copying flag on error
+        // First try the Clipboard API (works better on mobile, especially iOS)
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textarea.value)
+                .then(() => {
+                    copyBtn.textContent = "Copied!";
+                    setTimeout(() => {
+                        copyBtn.textContent = "Copy";
+                        // Reset the copying flag after the operation is complete
                         isCopying = false;
-
                         // Re-focus the textarea to allow continued editing
                         textarea.focus();
-                    });
-            } else {
-                // Reset the copying flag if no API available
-                isCopying = false;
-
-                // Re-focus the textarea to allow continued editing
-                textarea.focus();
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    // Fall back to execCommand method
+                    fallbackCopy();
+                });
+        } else {
+            // Fall back to execCommand method if Clipboard API isn't available
+            fallbackCopy();
+        }
+        
+        // Fallback copy method using execCommand
+        function fallbackCopy() {
+            try {
+                // Create a temporary textarea for iOS
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = textarea.value;
+                tempTextarea.style.position = 'fixed';
+                tempTextarea.style.left = '0';
+                tempTextarea.style.top = '0';
+                tempTextarea.style.opacity = '0';
+                document.body.appendChild(tempTextarea);
+                
+                // Special handling for iOS
+                tempTextarea.contentEditable = 'true';
+                tempTextarea.readOnly = false;
+                tempTextarea.focus();
+                tempTextarea.select();
+                
+                // For iOS
+                const range = document.createRange();
+                range.selectNodeContents(tempTextarea);
+                const selection = window.getSelection();
+                if (selection) {
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+                tempTextarea.setSelectionRange(0, textarea.value.length);
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                
+                if (successful) {
+                    copyBtn.textContent = "Copied!";
+                } else {
+                    copyBtn.textContent = "Copy failed";
+                }
+                
+                setTimeout(() => {
+                    copyBtn.textContent = "Copy";
+                    isCopying = false;
+                    textarea.focus();
+                }, 1500);
+                
+            } catch (err) {
+                console.error('Copy operation failed:', err);
+                copyBtn.textContent = "Copy failed";
+                setTimeout(() => {
+                    copyBtn.textContent = "Copy";
+                    isCopying = false;
+                    textarea.focus();
+                }, 1500);
             }
         }
     });
