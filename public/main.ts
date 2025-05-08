@@ -169,16 +169,24 @@ interface ReplyResponse {
 
 async function fetchReplies(): Promise<void> {
     const suggDiv = document.getElementById("suggestions");
-    
-    if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator">🧠</div>';
-    }
-    // Remove summary and count when loading
     const convoDiv = document.getElementById("conversation");
     
+    // Clear the suggestions area
+    if (suggDiv) {
+        suggDiv.innerHTML = '';
+    }
+    
+    // Show loading indicator in the summary area
     if (convoDiv) {
+        // Remove existing summary if any
         const oldSummary = convoDiv.querySelector('.summary');
         if (oldSummary) oldSummary.remove();
+        
+        // Add loading indicator to conversation area
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "summary";
+        loadingDiv.innerHTML = '<div class="loading-indicator">🧠</div>';
+        convoDiv.appendChild(loadingDiv);
     
         const oldCount = convoDiv.querySelector('.message-count');
         if (oldCount) oldCount.remove();
@@ -225,6 +233,11 @@ async function fetchReplies(): Promise<void> {
         const oldSummary = convoDiv.querySelector('.summary');
     
         if (oldSummary) oldSummary.remove();
+        
+        // Remove any loading indicator
+        const loadingIndicator = convoDiv.querySelector('.loading-indicator');
+        if (loadingIndicator) loadingIndicator.remove();
+        
         convoDiv.appendChild(summaryDiv);
         // Update message count
         const countDiv = document.createElement("div");
@@ -238,8 +251,20 @@ async function fetchReplies(): Promise<void> {
             renderReplies(suggDiv, replies);
         }
     } catch (error) {
+        // Show error in the summary area
+        if (convoDiv) {
+            const oldSummary = convoDiv.querySelector('.summary');
+            if (oldSummary) oldSummary.remove();
+            
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "summary";
+            errorDiv.innerHTML = '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>';
+            convoDiv.appendChild(errorDiv);
+        }
+        
+        // Clear suggestions area
         if (suggDiv) {
-            suggDiv.innerHTML = '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>';
+            suggDiv.innerHTML = '';
         }
     }
 }
