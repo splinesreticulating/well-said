@@ -377,6 +377,7 @@ select, textarea, button {
   padding: 0.75rem 1rem;
   border: 2px solid var(--border-color);
   transition: all 0.2s ease;
+  color: var(--dark);
 }
 
 @media (max-width: 768px) {
@@ -448,4 +449,6 @@ button:hover {
 
 .timeframe-controls select {
   min-width: 150px;
+  color: var(--dark);
+  background-color: white;
 }
