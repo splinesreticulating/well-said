@@ -15,6 +15,16 @@
 <body>
   <h1>WellSaid</h1>
 
+  <!-- Test area for copy functionality -->
+  <div class="test-copy-area" style="margin: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px;">
+    <h3>Copy Test Area</h3>
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+      <input type="text" id="test-text" value="Test text to copy" style="padding: 8px; margin-right: 10px; flex-grow: 1;">
+      <button id="test-copy-btn" style="padding: 8px 12px;">Copy</button>
+    </div>
+    <div id="copy-status" style="color: green; font-size: 0.9em;"></div>
+  </div>
+
   <div class="content-container">
     <div class="timeframe-controls">
       <label for="window-back"><strong>Summarize messages from:</strong></label>
