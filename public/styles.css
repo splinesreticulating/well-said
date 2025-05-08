@@ -177,9 +177,12 @@ h2 {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 1rem;
-  cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(92, 64, 51, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -190,9 +193,38 @@ h2 {
 }
 .reply:hover {
   background: var(--light);
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(92, 64, 51, 0.1);
   border-color: var(--primary-light);
+}
+
+.reply-text {
+  flex: 1;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.copy-btn {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.copy-btn:hover {
+  background-color: var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .copy-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }
 details {
   margin-top: 2rem;

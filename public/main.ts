@@ -50,32 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// Helper to revert input back to display div
-function revertToDiv(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
-    div.innerHTML = "";
-    div.textContent = val;
-    div.tabIndex = 0;
-    div.onclick = () => showEditableInput(val, div, suggDiv);
-}
 
-function showEditableInput(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
-    div.innerHTML = "";
-    
-    const input = document.createElement("input");
-    
-    input.type = "text";
-    input.value = val;
-    input.className = "reply-edit";
-    input.style.width = "80%";
-    input.style.marginRight = "0.5rem";
-    
-    const copyBtn = createCopyButton(() => input.value);
-    
-    input.onblur = () => revertToDiv(input.value, div, suggDiv);
-    input.onkeydown = (e) => { if (e.key === "Enter") revertToDiv(input.value, div, suggDiv); };
-    div.append(input, copyBtn);
-    input.focus();
-}
+// Function removed - we no longer need the ability to edit replies
 
 function createCopyButton(getValue: () => string): HTMLButtonElement {
     const btn = document.createElement("button");
@@ -282,63 +258,29 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
 
 function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     const div = document.createElement("div");
-    
-    div.className = "reply";
-    div.textContent = reply;
-    div.tabIndex = 0;
-    div.onclick = () => showReplyTextarea(reply, div, suggDiv);
-    
-    return div;
-}
-
-
-
-function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElement): void {
-    
-    const computed = window.getComputedStyle(div);
-    const lineCount = (reply.match(/\n/g) || []).length + 1;
-    const textarea = document.createElement("textarea");
-    
-    textarea.value = reply;
-    textarea.className = "reply-edit";
-    textarea.style.boxSizing = "border-box";
-    textarea.rows = lineCount;
-    textarea.style.font = computed.font;
-    textarea.style.padding = computed.padding;
-    textarea.style.borderRadius = computed.borderRadius;
-    textarea.style.border = computed.border;
-    textarea.style.marginRight = "0.5rem";
-    textarea.style.resize = "vertical";
-    textarea.style.minWidth = '200px';
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    textarea.oninput = (e: Event) => {
-        const target = e.target as HTMLTextAreaElement;
-        target.style.height = 'auto';
-        target.style.height = `${target.scrollHeight}px`;
-    };
-    
-    // Create a simple copy button with debug logging
     const copyBtn = document.createElement("button");
+    const replyText = document.createElement("div");
+    
+    // Set up the container div
+    div.className = "reply";
+    
+    // Set up the text container
+    replyText.className = "reply-text";
+    replyText.textContent = reply;
+    
+    // Set up the copy button
     copyBtn.textContent = "Copy";
     copyBtn.className = "copy-btn";
     copyBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         
-        // Set the copying flag to prevent textarea from reverting
-        isCopying = true;
-        
-        // First try the Clipboard API (works better on mobile, especially iOS)
+        // Try Clipboard API first
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(textarea.value)
+            navigator.clipboard.writeText(reply)
                 .then(() => {
                     copyBtn.textContent = "Copied!";
                     setTimeout(() => {
                         copyBtn.textContent = "Copy";
-                        // Reset the copying flag after the operation is complete
-                        isCopying = false;
-                        // Re-focus the textarea to allow continued editing
-                        textarea.focus();
                     }, 1500);
                 })
                 .catch(err => {
@@ -347,16 +289,16 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
                     fallbackCopy();
                 });
         } else {
-            // Fall back to execCommand method if Clipboard API isn't available
+            // Fall back to execCommand method
             fallbackCopy();
         }
         
         // Fallback copy method using execCommand
         function fallbackCopy() {
             try {
-                // Create a temporary textarea for iOS
+                // Create a temporary textarea
                 const tempTextarea = document.createElement('textarea');
-                tempTextarea.value = textarea.value;
+                tempTextarea.value = reply;
                 tempTextarea.style.position = 'fixed';
                 tempTextarea.style.left = '0';
                 tempTextarea.style.top = '0';
@@ -377,7 +319,7 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
                     selection.removeAllRanges();
                     selection.addRange(range);
                 }
-                tempTextarea.setSelectionRange(0, textarea.value.length);
+                tempTextarea.setSelectionRange(0, reply.length);
                 
                 const successful = document.execCommand('copy');
                 document.body.removeChild(tempTextarea);
@@ -390,8 +332,6 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
                 
                 setTimeout(() => {
                     copyBtn.textContent = "Copy";
-                    isCopying = false;
-                    textarea.focus();
                 }, 1500);
                 
             } catch (err) {
@@ -399,48 +339,20 @@ function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElem
                 copyBtn.textContent = "Copy failed";
                 setTimeout(() => {
                     copyBtn.textContent = "Copy";
-                    isCopying = false;
-                    textarea.focus();
                 }, 1500);
             }
         }
     });
     
-    // Store a flag to track if we're handling a copy operation
-    let isCopying = false;
+    // Assemble the components
+    div.appendChild(replyText);
+    div.appendChild(copyBtn);
     
-    textarea.onblur = (e) => {
-
-        
-        // Don't revert if we're in the middle of a copy operation
-        if (isCopying) {
-
-            return;
-        }
-        
-        // Check if the related target is our copy button
-        const relatedTarget = e.relatedTarget as HTMLElement;
-        if (relatedTarget && relatedTarget.className === 'copy-btn') {
-
-            // Don't revert when clicking the copy button
-            return;
-        }
-        
-
-        revertToDiv(textarea.value, div, suggDiv);
-    };
-    textarea.onkeydown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-
-            e.preventDefault();
-            revertToDiv(textarea.value, div, suggDiv);
-        }
-    };
-    
-    div.innerHTML = "";
-    div.append(textarea, copyBtn);
-
-    textarea.focus();
+    return div;
 }
+
+
+
+// Function removed - we no longer need the ability to edit replies
 
 // API calls will now only happen when the Go button is clicked
