@@ -1,17 +1,20 @@
 <!-- File: public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WellSaid</title>
   <!-- Emoji favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💬</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💬</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quintessential&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <h1>WellSaid</h1>
 
@@ -36,7 +39,6 @@
 
     <h2>Suggested Replies</h2>
     <div>
-      <span style="font-weight: bold; margin: 0.3rem 0 0.5rem 0; display: block;">Tone:</span>
       <div id="tone-radio-group" class="radio-group">
         <label class="active"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
         <label><input type="radio" name="tone" value="honest"> Honest</label>
@@ -51,10 +53,11 @@
       <summary><strong>More context</strong></summary>
       <textarea id="context-input" rows="4"></textarea>
       <div class="context-hint">
-        Anything else AI should know about?
+        Anything else we should know about?
       </div>
     </details>
   </div>
   <script src="../dist/public/main.js"></script>
 </body>
+
 </html>

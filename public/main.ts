@@ -48,42 +48,110 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Helper to revert input back to display div
-function revertToDiv(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
-    div.innerHTML = "";
-    div.textContent = val;
-    div.tabIndex = 0;
-    div.onclick = () => showEditableInput(val, div, suggDiv);
-}
-
-function showEditableInput(val: string, div: HTMLElement, suggDiv: HTMLElement): void {
-    div.innerHTML = "";
-    
-    const input = document.createElement("input");
-    
-    input.type = "text";
-    input.value = val;
-    input.className = "reply-edit";
-    input.style.width = "80%";
-    input.style.marginRight = "0.5rem";
-    
-    const copyBtn = createCopyButton(() => input.value);
-    
-    input.onblur = () => revertToDiv(input.value, div, suggDiv);
-    input.onkeydown = (e) => { if (e.key === "Enter") revertToDiv(input.value, div, suggDiv); };
-    div.append(input, copyBtn);
-    input.focus();
-}
-
 function createCopyButton(getValue: () => string): HTMLButtonElement {
     const btn = document.createElement("button");
     
     btn.textContent = "Copy";
     btn.className = "copy-btn";
-    btn.onclick = (e) => {
+    
+    btn.addEventListener("click", (e) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(getValue());
-    };
+        
+        // Get the text to copy
+        const textToCopy = getValue();
+        
+        // First try the Clipboard API (works better on mobile, especially iOS)
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    // Provide visual feedback
+                    const originalText = btn.textContent;
+                    btn.textContent = "Copied!";
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    // Fall back to execCommand method
+                    useExecCommand(textToCopy, btn);
+                });
+        } else {
+            // Fall back to execCommand method if Clipboard API isn't available
+            useExecCommand(textToCopy, btn);
+        }
+    });
+    
+    // Helper function for execCommand method (fallback)
+    function useExecCommand(text: string, button: HTMLButtonElement) {
+        // Create a temporary textarea element
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        
+        // Make it visible but out of the way
+        textArea.style.position = 'fixed';
+        textArea.style.left = '0';
+        textArea.style.top = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.style.opacity = '0';
+        
+        document.body.appendChild(textArea);
+        
+        try {
+            // Critical steps for iOS: need to be visible and in the DOM
+            textArea.contentEditable = 'true';
+            textArea.readOnly = false;
+            
+            // Focus and select the text
+            textArea.focus();
+            textArea.select();
+            
+            // For iOS
+            const range = document.createRange();
+            range.selectNodeContents(textArea);
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+            textArea.setSelectionRange(0, text.length);
+            
+            // Execute the copy command
+            const successful = document.execCommand('copy');
+            
+            if (successful) {
+                // Provide visual feedback
+                const originalText = button.textContent;
+                button.textContent = "Copied!";
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1500);
+            } else {
+                console.error('execCommand returned false');
+                button.textContent = "Copy failed";
+                setTimeout(() => {
+                    button.textContent = "Copy";
+                }, 1500);
+            }
+        } catch (err) {
+            console.error('Copy operation failed:', err);
+            button.textContent = "Copy failed";
+            setTimeout(() => {
+                button.textContent = "Copy";
+            }, 1500);
+        } finally {
+            // Clean up
+            document.body.removeChild(textArea);
+        }
+    }
     
     return btn;
 }
@@ -96,20 +164,29 @@ interface ReplyResponse {
 
 async function fetchReplies(): Promise<void> {
     const suggDiv = document.getElementById("suggestions");
-    
-    if (suggDiv) {
-        suggDiv.innerHTML = '<div class="loading-indicator">🧠</div>';
-    }
-    // Remove summary and count when loading
     const convoDiv = document.getElementById("conversation");
     
+    // Clear the suggestions area
+    if (suggDiv) {
+        suggDiv.innerHTML = '';
+    }
+    
+    // Show loading indicator in the summary area
     if (convoDiv) {
+        // Remove existing summary if any
         const oldSummary = convoDiv.querySelector('.summary');
         if (oldSummary) oldSummary.remove();
+        
+        // Add loading indicator to conversation area
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "summary";
+        loadingDiv.innerHTML = '<div class="loading-indicator">🧠</div>';
+        convoDiv.appendChild(loadingDiv);
     
         const oldCount = convoDiv.querySelector('.message-count');
         if (oldCount) oldCount.remove();
     }
+
     // Get selected tone from radio buttons
     const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
     const tone = toneRadio ? toneRadio.value : "gentle";
@@ -147,11 +224,17 @@ async function fetchReplies(): Promise<void> {
         const summaryDiv = document.createElement("div");
     
         summaryDiv.className = "summary";
-        summaryDiv.innerHTML = summary; // Use innerHTML instead of textContent to render HTML
+        summaryDiv.innerHTML = summary;
+
         // Remove any existing summary
         const oldSummary = convoDiv.querySelector('.summary');
     
         if (oldSummary) oldSummary.remove();
+        
+        // Remove any loading indicator
+        const loadingIndicator = convoDiv.querySelector('.loading-indicator');
+        if (loadingIndicator) loadingIndicator.remove();
+        
         convoDiv.appendChild(summaryDiv);
         // Update message count
         const countDiv = document.createElement("div");
@@ -165,8 +248,20 @@ async function fetchReplies(): Promise<void> {
             renderReplies(suggDiv, replies);
         }
     } catch (error) {
+        // Show error in the summary area
+        if (convoDiv) {
+            const oldSummary = convoDiv.querySelector('.summary');
+            if (oldSummary) oldSummary.remove();
+            
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "summary";
+            errorDiv.innerHTML = '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>';
+            convoDiv.appendChild(errorDiv);
+        }
+        
+        // Clear suggestions area
         if (suggDiv) {
-            suggDiv.innerHTML = '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>';
+            suggDiv.innerHTML = '';
         }
     }
 }
@@ -185,51 +280,104 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
 
 function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     const div = document.createElement("div");
+    const copyBtn = document.createElement("button");
+    const replyText = document.createElement("div");
     
+    // Set up the container div
     div.className = "reply";
-    div.textContent = reply;
-    div.tabIndex = 0;
-    div.onclick = () => showReplyTextarea(reply, div, suggDiv);
+    
+    // Set up the text container
+    replyText.className = "reply-text";
+    replyText.textContent = reply;
+    
+    // Set up the copy button with icon
+    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    copyBtn.className = "copy-btn";
+    copyBtn.title = "Copy to clipboard";
+    copyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        
+        // Try Clipboard API first
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(reply)
+                .then(() => {
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                        copyBtn.classList.remove('copied');
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    // Fall back to execCommand method
+                    fallbackCopy();
+                });
+        } else {
+            // Fall back to execCommand method
+            fallbackCopy();
+        }
+        
+        // Fallback copy method using execCommand
+        function fallbackCopy() {
+            try {
+                // Create a temporary textarea
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = reply;
+                tempTextarea.style.position = 'fixed';
+                tempTextarea.style.left = '0';
+                tempTextarea.style.top = '0';
+                tempTextarea.style.opacity = '0';
+                document.body.appendChild(tempTextarea);
+                
+                // Special handling for iOS
+                tempTextarea.contentEditable = 'true';
+                tempTextarea.readOnly = false;
+                tempTextarea.focus();
+                tempTextarea.select();
+                
+                // For iOS
+                const range = document.createRange();
+                range.selectNodeContents(tempTextarea);
+                const selection = window.getSelection();
+                if (selection) {
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+                tempTextarea.setSelectionRange(0, reply.length);
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                
+                if (successful) {
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    copyBtn.classList.add('copied');
+                } else {
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                    copyBtn.classList.add('failed');
+                }
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                    copyBtn.classList.remove('copied');
+                    copyBtn.classList.remove('failed');
+                }, 1500);
+                
+            } catch (err) {
+                console.error('Copy operation failed:', err);
+                copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                copyBtn.classList.add('failed');
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+                    copyBtn.classList.remove('failed');
+                }, 1500);
+            }
+        }
+    });
+    
+    // Assemble the components
+    div.appendChild(replyText);
+    div.appendChild(copyBtn);
     
     return div;
 }
-
-function showReplyTextarea(reply: string, div: HTMLDivElement, suggDiv: HTMLElement): void {
-    const computed = window.getComputedStyle(div);
-    const lineCount = (reply.match(/\n/g) || []).length + 1;
-    const textarea = document.createElement("textarea");
-    
-    textarea.value = reply;
-    textarea.className = "reply-edit";
-    textarea.style.boxSizing = "border-box";
-    textarea.rows = lineCount;
-    textarea.style.font = computed.font;
-    textarea.style.padding = computed.padding;
-    textarea.style.borderRadius = computed.borderRadius;
-    textarea.style.border = computed.border;
-    textarea.style.marginRight = "0.5rem";
-    textarea.style.resize = "vertical";
-    textarea.style.minWidth = '200px';
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    textarea.oninput = (e: Event) => {
-        const target = e.target as HTMLTextAreaElement;
-
-        target.style.height = 'auto';
-        target.style.height = `${target.scrollHeight}px`;
-    };
-    const copyBtn = createCopyButton(() => textarea.value);
-    
-    textarea.onblur = () => revertToDiv(textarea.value, div, suggDiv);
-    textarea.onkeydown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            revertToDiv(textarea.value, div, suggDiv);
-        }
-    };
-    div.innerHTML = "";
-    div.append(textarea, copyBtn);
-    textarea.focus();
-}
-
-// API calls will now only happen when the Go button is clicked
