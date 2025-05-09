@@ -48,11 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-
-
-// Function removed - we no longer need the ability to edit replies
-
 function createCopyButton(getValue: () => string): HTMLButtonElement {
     const btn = document.createElement("button");
     
@@ -191,6 +186,7 @@ async function fetchReplies(): Promise<void> {
         const oldCount = convoDiv.querySelector('.message-count');
         if (oldCount) oldCount.remove();
     }
+
     // Get selected tone from radio buttons
     const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
     const tone = toneRadio ? toneRadio.value : "gentle";
@@ -228,7 +224,8 @@ async function fetchReplies(): Promise<void> {
         const summaryDiv = document.createElement("div");
     
         summaryDiv.className = "summary";
-        summaryDiv.innerHTML = summary; // Use innerHTML instead of textContent to render HTML
+        summaryDiv.innerHTML = summary;
+
         // Remove any existing summary
         const oldSummary = convoDiv.querySelector('.summary');
     
@@ -384,9 +381,3 @@ function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     
     return div;
 }
-
-
-
-// Function removed - we no longer need the ability to edit replies
-
-// API calls will now only happen when the Go button is clicked
