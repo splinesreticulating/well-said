@@ -27,7 +27,10 @@ export const getSuggestedReplies = async (
         const khojRes = await fetch(KHOJ_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ q: prompt, agent: process.env.KHOJ_AGENT }),
+            body: JSON.stringify({
+                q: prompt,
+                ...(process.env.KHOJ_AGENT ? { agent: process.env.KHOJ_AGENT } : {})
+            }),
         })
         if (!khojRes.ok) {
             let errorBody: string
