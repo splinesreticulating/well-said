@@ -59,7 +59,7 @@ $ npm run build
 $ npm start
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000).
+The app will be available at [http://localhost:2309](http://localhost:2309).
 
 ---
 
@@ -68,6 +68,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 - **Backend**: Node.js, Express, TypeScript
 - **Database**: SQLite (reads iMessage chat.db)
 - **AI**: OpenAI GPT-4 API, Khoj (local LLM support)
+- **Authentication**: Simple username/password authentication
 
 ---
 
