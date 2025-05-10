@@ -23,9 +23,12 @@ app.use(session({
 }))
 
 app.use(cors())
-app.use(express.static("public"))
-app.use("/dist", express.static("dist"))
 app.use(express.json())
+
+// Only serve login.html and assets without authentication
+app.use("/login.html", express.static("public/login.html"))
+app.use("/styles.css", express.static("public/styles.css"))
+app.use("/dist", express.static("dist"))
 
 // Authentication routes (not protected)
 app.post("/login", (req, res) => {
@@ -35,23 +38,24 @@ app.get("/logout", (req, res) => {
     auth.logout(req, res);
 })
 
-// Static routes that don't need authentication
-app.get("/login.html", (req, res) => {
-    res.sendFile("login.html", { root: "public" })
+// Redirect root to login if not authenticated
+app.get("/", (req, res, next) => {
+    if (req.session?.isAuthenticated) {
+        next();
+    } else {
+        res.redirect("/login.html");
+    }
 })
 
 // Middleware to protect all other routes
 app.use((req, res, next) => {
-    // Skip authentication for static assets like CSS and JS files
-    if (req.path.endsWith('.css') || req.path.endsWith('.js') || req.path.includes('/dist/')) {
-        return next()
-    }
-    
-    // Apply authentication middleware
-    auth.isAuthenticated(req, res, next)
+    auth.isAuthenticated(req, res, next);
 })
 
-// Serve index.html only to authenticated users
+// Serve protected static files (after authentication check)
+app.use(express.static("public"))
+
+// This route is already protected by the auth middleware above
 app.get("/", (req, res) => {
     res.sendFile("index.html", { root: "public" })
 })
