@@ -13,9 +13,13 @@ ${formattedMessages}
 Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
 Suggest 3 replies that I might send.
 Tone: ${tone}
-${context ? `
+${
+    context
+        ? `
 Additional context: ${context}
-` : ''}
+`
+        : ""
+}
 Reply 1:
 Reply 2:
 Reply 3:

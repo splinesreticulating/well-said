@@ -9,18 +9,20 @@ import cors from "cors"
 import session from "express-session"
 
 const app = express()
-const PORT = 3000
+const PORT = 2309
 
 // Session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'wellsaid-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}))
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || "wellsaid-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        },
+    }),
+)
 
 app.use(cors())
 app.use(express.json())
@@ -32,24 +34,24 @@ app.use("/dist", express.static("dist"))
 
 // Authentication routes (not protected)
 app.post("/login", (req, res) => {
-    auth.login(req, res);
+    auth.login(req, res)
 })
 app.get("/logout", (req, res) => {
-    auth.logout(req, res);
+    auth.logout(req, res)
 })
 
 // Redirect root to login if not authenticated
 app.get("/", (req, res, next) => {
     if (req.session?.isAuthenticated) {
-        next();
+        next()
     } else {
-        res.redirect("/login.html");
+        res.redirect("/login.html")
     }
 })
 
 // Middleware to protect all other routes
 app.use((req, res, next) => {
-    auth.isAuthenticated(req, res, next);
+    auth.isAuthenticated(req, res, next)
 })
 
 // Serve protected static files (after authentication check)
@@ -70,7 +72,7 @@ app.post("/replies", async (req, res) => {
                 summary: "",
                 replies: [],
                 messageCount: 0,
-                info: "No messages to summarize."
+                info: "No messages to summarize.",
             })
             return
         }

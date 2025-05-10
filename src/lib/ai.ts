@@ -29,7 +29,9 @@ export const getSuggestedReplies = async (
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 q: prompt,
-                ...(process.env.KHOJ_AGENT ? { agent: process.env.KHOJ_AGENT } : {})
+                ...(process.env.KHOJ_AGENT
+                    ? { agent: process.env.KHOJ_AGENT }
+                    : {}),
             }),
         })
         if (!khojRes.ok) {
@@ -40,7 +42,9 @@ export const getSuggestedReplies = async (
                 errorBody = "(could not read body)"
             }
             // Only log the status and the first 500 characters of the error body
-            console.error(`Khoj API error: ${khojRes.status} - ${errorBody.slice(0, 500)}`)
+            console.error(
+                `Khoj API error: ${khojRes.status} - ${errorBody.slice(0, 500)}`,
+            )
             throw new Error(`Khoj API error: ${khojRes.status}`)
         }
         const khojData = await khojRes.json()
@@ -53,11 +57,12 @@ export const getSuggestedReplies = async (
             ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
             ...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g),
         ]
-        const replies = replyMatches.map((m) => m[1]
-            .replace(/^\*+\s*/, "")    // Remove leading asterisks and spaces
-            .replace(/^"/, "")         // Remove leading quote
-            .replace(/"$/, "")         // Remove trailing quote
-            .trim()
+        const replies = replyMatches.map((m) =>
+            m[1]
+                .replace(/^\*+\s*/, "") // Remove leading asterisks and spaces
+                .replace(/^"/, "") // Remove leading quote
+                .replace(/"$/, "") // Remove trailing quote
+                .trim(),
         )
         return { summary, replies, messageCount: messages.length }
     } catch (err) {
