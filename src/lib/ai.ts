@@ -2,15 +2,30 @@ import type { Message } from "./messages"
 import { buildReplyPrompt } from "./prompts"
 import { parseSummaryToHumanReadable } from "./utils"
 
-const KHOJ_API_URL =
-    process.env.KHOJ_API_URL || "http://localhost:8080/api/chat"
-console.log(`🤖 Using Khoj API at: ${KHOJ_API_URL}`)
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4"
+const OPENAI_TEMPERATURE = Number.parseFloat(process.env.OPENAI_TEMPERATURE || "0.7")
+const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
+
+if (!OPENAI_API_KEY) {
+    console.warn("⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.")
+} else {
+    console.log(`🤖 Using OpenAI API with model: ${OPENAI_MODEL}`)
+}
 
 export const getSuggestedReplies = async (
     messages: Message[],
     tone: string,
     context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
+    if (!OPENAI_API_KEY) {
+        return {
+            summary: "OpenAI API key is not configured.",
+            replies: ["Please set up your OpenAI API key in the .env file."],
+            messageCount: messages.length,
+        }
+    }
+
     const recentText = messages.map((m) => {
         const tag =
             m.sender === "me"
@@ -24,39 +39,47 @@ export const getSuggestedReplies = async (
     const prompt = buildReplyPrompt(recentText, tone, context)
 
     try {
-        const khojRes = await fetch(KHOJ_API_URL, {
+        const response = await fetch(OPENAI_API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${OPENAI_API_KEY}`
+            },
             body: JSON.stringify({
-                q: prompt,
-                ...(process.env.KHOJ_AGENT
-                    ? { agent: process.env.KHOJ_AGENT }
-                    : {}),
+                model: OPENAI_MODEL,
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that summarizes conversations and suggests replies." },
+                    { role: "user", content: prompt }
+                ],
+                temperature: OPENAI_TEMPERATURE,
             }),
         })
-        if (!khojRes.ok) {
+
+        if (!response.ok) {
             let errorBody: string
             try {
-                errorBody = await khojRes.text()
+                errorBody = await response.text()
             } catch (e) {
                 errorBody = "(could not read body)"
             }
-            // Only log the status and the first 500 characters of the error body
             console.error(
-                `Khoj API error: ${khojRes.status} - ${errorBody.slice(0, 500)}`,
+                `OpenAI API error: ${response.status} - ${errorBody.slice(0, 500)}`,
             )
-            throw new Error(`Khoj API error: ${khojRes.status}`)
+            throw new Error(`OpenAI API error: ${response.status}`)
         }
-        const khojData = await khojRes.json()
-        // Khoj returns { response: "..." }
-        const rawOutput = khojData.response || ""
+
+        const data = await response.json()
+        const rawOutput = data.choices[0]?.message?.content || ""
+        
         // Extract summary as everything before the first reply
         const summary = parseSummaryToHumanReadable(rawOutput)
+        
         // Match both '**Reply 1:**' and 'Reply 1:'
         const replyMatches = [
             ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
             ...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g),
         ]
+        
         const replies = replyMatches.map((m) =>
             m[1]
                 .replace(/^\*+\s*/, "") // Remove leading asterisks and spaces
@@ -64,6 +87,7 @@ export const getSuggestedReplies = async (
                 .replace(/"$/, "") // Remove trailing quote
                 .trim(),
         )
+        
         return { summary, replies, messageCount: messages.length }
     } catch (err) {
         console.error("Error generating replies:", err)
