@@ -28,10 +28,10 @@ describe("parseSummaryToHumanReadable", () => {
     test("should extract only summary part when input contains both Summary and Suggested replies sections", () => {
         const input = `Summary: The summary.
 
-Suggested replies:
-Reply 1: Reply 1
-Reply 2: Reply 2
-Reply 3: Reply 3`
+        Suggested replies:
+        Reply 1: Reply 1
+        Reply 2: Reply 2
+        Reply 3: Reply 3`
 
         const expected = "The summary."
 
