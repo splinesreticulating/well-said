@@ -1,6 +1,7 @@
 import type { Message } from "./messages"
 import { buildReplyPrompt } from "./prompts"
 import { parseSummaryToHumanReadable } from "./utils"
+import logger from './logger'
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4"
@@ -8,9 +9,9 @@ const OPENAI_TEMPERATURE = Number.parseFloat(process.env.OPENAI_TEMPERATURE || "
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
 
 if (!OPENAI_API_KEY) {
-    console.warn("⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.")
+    logger.warn("⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.")
 } else {
-    console.log(`🤖 Using OpenAI API with model: ${OPENAI_MODEL}`)
+    logger.info(`🤖 Using OpenAI API with model: ${OPENAI_MODEL}`)
 }
 
 export const getSuggestedReplies = async (
@@ -38,8 +39,8 @@ export const getSuggestedReplies = async (
 
     const prompt = buildReplyPrompt(recentText, tone, context)
 
-    console.debug("\n==== PROMPT ====")
-    console.debug(prompt)
+    logger.debug("\n==== PROMPT ====")
+    logger.debug(prompt)
 
     try {
         const response = await fetch(OPENAI_API_URL, {
@@ -65,7 +66,7 @@ export const getSuggestedReplies = async (
             } catch (e) {
                 errorBody = "(could not read body)"
             }
-            console.error(
+            logger.error(
                 `OpenAI API error: ${response.status} - ${errorBody.slice(0, 500)}`,
             )
             throw new Error(`OpenAI API error: ${response.status}`)
@@ -93,7 +94,7 @@ export const getSuggestedReplies = async (
         
         return { summary, replies, messageCount: messages.length }
     } catch (err) {
-        console.error("Error generating replies:", err)
+        logger.error("Error generating replies:", err)
         return {
             summary: "",
             replies: ["(Sorry, I had trouble generating a response.)"],

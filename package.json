@@ -26,7 +26,8 @@
         "express-session": "^1.18.1",
         "openai": "^4.89.0",
         "sqlite": "^5.1.1",
-        "sqlite3": "^5.1.7"
+        "sqlite3": "^5.1.7",
+        "winston": "^3.17.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.4",
