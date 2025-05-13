@@ -14,8 +14,11 @@ Please give a brief summary, including the emotional tone, main topics, and any 
 Suggest 3 replies that I might send.
 Tone: ${tone}
 ${context ? `Additional context: ${context}` : ""}
-Reply 1:
-Reply 2:
-Reply 3:
+Please respond in this format: 
+Summary: <summary>
+Suggested replies:
+Reply 1: <reply>
+Reply 2: <reply>
+Reply 3: <reply>
 `
 }

@@ -1,9 +1,11 @@
+import logger from './logger';
+
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
-    console.debug("\n==== RAW CONTENT OUTPUT ====")
-    console.debug(rawOutput)
+    logger.debug("\n==== RAW CONTENT OUTPUT ====")
+    logger.debug(rawOutput)
     
-    // Extract the summary from the raw output
-    const summaryRegex = /Summary:[ \t]*(\n+)?(.+)/s
+    // Extract the summary from the raw output - get content between "Summary:" and "Suggested replies:"
+    const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
     const match = rawOutput.match(summaryRegex)
     
     if (!match) {
