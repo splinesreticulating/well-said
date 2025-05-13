@@ -1,15 +1,6 @@
 import { parseSummaryToHumanReadable } from '../../src/lib/utils';
 
 describe('parseSummaryToHumanReadable', () => {
-  // Silence console.debug during tests
-  beforeAll(() => {
-    jest.spyOn(console, 'debug').mockImplementation(() => {});
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
-
   test('should extract summary when it is on the same line', () => {
     expect(parseSummaryToHumanReadable("Summary: The story so far.")).toBe("The story so far.")
   });
