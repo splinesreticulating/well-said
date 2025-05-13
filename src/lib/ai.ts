@@ -38,6 +38,9 @@ export const getSuggestedReplies = async (
 
     const prompt = buildReplyPrompt(recentText, tone, context)
 
+    console.debug("\n==== PROMPT ====")
+    console.debug(prompt)
+
     try {
         const response = await fetch(OPENAI_API_URL, {
             method: "POST",
