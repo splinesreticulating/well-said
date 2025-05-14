@@ -1,5 +1,5 @@
 import type { Message } from "./messages"
-import { buildReplyPrompt } from "./prompts"
+import { buildReplyPrompt, permanentContext } from "./prompts"
 import { parseSummaryToHumanReadable } from "./utils"
 import logger from './logger'
 
@@ -52,7 +52,7 @@ export const getSuggestedReplies = async (
             body: JSON.stringify({
                 model: OPENAI_MODEL,
                 messages: [
-                    { role: "system", content: "You are a helpful assistant that summarizes conversations and suggests replies." },
+                    { role: "system", content: permanentContext },
                     { role: "user", content: prompt }
                 ],
                 temperature: OPENAI_TEMPERATURE,
