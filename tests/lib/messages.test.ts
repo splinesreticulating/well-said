@@ -2,6 +2,23 @@ import { getRecentMessages } from "../../src/lib/messages"
 import type { Message } from "../../src/lib/messages"
 import * as sqlite from "sqlite"
 
+// Constants for test data
+const TEST_TIMESTAMP_1 = "2023-01-01 10:00:00"
+const TEST_TIMESTAMP_2 = "2023-01-01 10:01:00"
+const TEST_SENDER_ME = "me"
+const TEST_SENDER_PARTNER = "partner"
+const TEST_MESSAGE_1 = "Hello there!"
+const TEST_MESSAGE_2 = "Hi! How are you?"
+
+// Constants for date testing
+const TEST_START_DATE = "2023-01-01T00:00:00Z"
+const TEST_END_DATE = "2023-01-31T23:59:59Z"
+const APPLE_EPOCH_DATE = "2001-01-01T00:00:00Z"
+const ISO_TEST_DATE = "2023-01-01T00:00:00Z"
+
+// Constants for environment
+const TEST_PARTNER_PHONE = "+15551234567"
+
 // Mock SQLite database
 jest.mock("sqlite", () => ({
     open: jest.fn(),
@@ -10,8 +27,8 @@ jest.mock("sqlite", () => ({
 describe("Messages Module", () => {
     // Test data and helpers
     const mockMessages: Message[] = [
-        { sender: "me", text: "Hello there!", timestamp: "2023-01-01 10:00:00" },
-        { sender: "partner", text: "Hi! How are you?", timestamp: "2023-01-01 10:01:00" },
+        { sender: TEST_SENDER_ME, text: TEST_MESSAGE_1, timestamp: TEST_TIMESTAMP_1 },
+        { sender: TEST_SENDER_PARTNER, text: TEST_MESSAGE_2, timestamp: TEST_TIMESTAMP_2 },
     ]
 
     // Helper function to create a mock of the messages module
@@ -37,7 +54,7 @@ describe("Messages Module", () => {
     beforeEach(() => {
         jest.resetModules()
         process.env = { ...originalEnv }
-        process.env.PARTNER_PHONE = "+15551234567"
+        process.env.PARTNER_PHONE = TEST_PARTNER_PHONE
         jest.clearAllMocks()
     })
     
@@ -72,8 +89,8 @@ describe("Messages Module", () => {
             })
         })
         
-        const startDate = "2023-01-01T00:00:00Z"
-        const endDate = "2023-01-31T23:59:59Z"
+        const startDate = TEST_START_DATE
+        const endDate = TEST_END_DATE
         
         // Act
         await messagesModule.getRecentMessages(startDate, endDate)
@@ -86,13 +103,13 @@ describe("Messages Module", () => {
     test("handles date conversion correctly", async () => {
         // Arrange
         const isoToAppleNs = (iso: string): number => {
-            const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime()
+            const appleEpoch = new Date(APPLE_EPOCH_DATE).getTime()
             const target = new Date(iso).getTime()
             return (target - appleEpoch) * 1000000 // ms to ns
         }
         
-        const isoDate = "2023-01-01T00:00:00Z"
-        const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime()
+        const isoDate = ISO_TEST_DATE
+        const appleEpoch = new Date(APPLE_EPOCH_DATE).getTime()
         const targetDate = new Date(isoDate).getTime()
         const expectedNs = (targetDate - appleEpoch) * 1000000
         

@@ -1,6 +1,23 @@
 import auth from "../../src/lib/auth"
 import type { Request, Response, NextFunction } from "express"
 
+// Constants for routes and paths
+const LOGIN_PATH = "/login.html"
+const LOGIN_ERROR_PATH = "/login.html?error=auth"
+const API_PATH_PREFIX = "/api/"
+
+// Constants for status codes
+const STATUS_OK = 200
+const STATUS_UNAUTHORIZED = 401
+
+// Constants for error messages
+const ERROR_UNAUTHORIZED = "Unauthorized"
+const ERROR_INVALID_CREDENTIALS = "Invalid credentials"
+
+// Constants for test credentials
+const TEST_USERNAME = "testuser"
+const TEST_PASSWORD = "testpass"
+
 describe("Auth Module", () => {
     // Test helpers to reduce duplication
     type MockRequestOptions = {
@@ -29,8 +46,8 @@ describe("Auth Module", () => {
     beforeEach(() => {
         jest.resetModules()
         process.env = { ...originalEnv }
-        process.env.AUTH_USERNAME = "testuser"
-        process.env.AUTH_PASSWORD = "testpass"
+        process.env.AUTH_USERNAME = TEST_USERNAME
+        process.env.AUTH_PASSWORD = TEST_PASSWORD
     })
 
     afterEach(() => {
@@ -64,7 +81,7 @@ describe("Auth Module", () => {
             auth.isAuthenticated(req, res, next)
             
             // Assert
-            expect(res.redirect).toHaveBeenCalledWith("/login.html?error=auth")
+            expect(res.redirect).toHaveBeenCalledWith(LOGIN_ERROR_PATH)
             expect(next).not.toHaveBeenCalled()
         })
 
@@ -72,7 +89,7 @@ describe("Auth Module", () => {
             // Arrange
             const req = createMockRequest({ 
                 session: { isAuthenticated: false },
-                path: "/api/some-endpoint"
+                path: `${API_PATH_PREFIX}some-endpoint`
             })
             const res = createMockResponse()
             const next = jest.fn()
@@ -81,8 +98,8 @@ describe("Auth Module", () => {
             auth.isAuthenticated(req, res, next)
             
             // Assert
-            expect(res.status).toHaveBeenCalledWith(401)
-            expect(res.json).toHaveBeenCalledWith({ error: "Unauthorized" })
+            expect(res.status).toHaveBeenCalledWith(STATUS_UNAUTHORIZED)
+            expect(res.json).toHaveBeenCalledWith({ error: ERROR_UNAUTHORIZED })
             expect(next).not.toHaveBeenCalled()
         })
     })
@@ -91,7 +108,7 @@ describe("Auth Module", () => {
         test("sets session and returns success with valid credentials", () => {
             // Arrange
             const req = createMockRequest({
-                body: { username: "testuser", password: "testpass" }
+                body: { username: TEST_USERNAME, password: TEST_PASSWORD }
             })
             const res = createMockResponse()
 
@@ -101,7 +118,7 @@ describe("Auth Module", () => {
             // Assert
             expect(req.session.isAuthenticated).toBe(true)
             expect(req.session.username).toBe("testuser")
-            expect(res.status).toHaveBeenCalledWith(200)
+            expect(res.status).toHaveBeenCalledWith(STATUS_OK)
             expect(res.json).toHaveBeenCalledWith({ success: true })
         })
 
@@ -116,8 +133,8 @@ describe("Auth Module", () => {
             auth.login(req, res)
             
             // Assert
-            expect(res.status).toHaveBeenCalledWith(401)
-            expect(res.json).toHaveBeenCalledWith({ error: "Invalid credentials" })
+            expect(res.status).toHaveBeenCalledWith(STATUS_UNAUTHORIZED)
+            expect(res.json).toHaveBeenCalledWith({ error: ERROR_INVALID_CREDENTIALS })
         })
     })
 
@@ -135,7 +152,7 @@ describe("Auth Module", () => {
             
             // Assert
             expect(destroyMock).toHaveBeenCalled()
-            expect(res.redirect).toHaveBeenCalledWith("/login.html")
+            expect(res.redirect).toHaveBeenCalledWith(LOGIN_PATH)
         })
 
         test("redirects to login when no session exists", () => {
@@ -147,7 +164,7 @@ describe("Auth Module", () => {
             auth.logout(req, res)
             
             // Assert
-            expect(res.redirect).toHaveBeenCalledWith("/login.html")
+            expect(res.redirect).toHaveBeenCalledWith(LOGIN_PATH)
         })
     })
 })
