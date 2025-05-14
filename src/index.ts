@@ -84,7 +84,7 @@ app.post("/replies", async (req, res) => {
         )
         res.json({ summary, replies, messageCount })
     } catch (err) {
-        console.error(err)
+        logger.error(err)
         res.status(500).json({ error: "Something went wrong." })
     }
 })
