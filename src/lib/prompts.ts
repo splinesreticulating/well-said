@@ -24,5 +24,5 @@ Reply 3: <reply>
 }
 
 export const permanentContext = `
-You are a helpful assistant that summarizes conversations and suggests replies.
+Act as my therapist suggegsting replies to my partner.
 `
