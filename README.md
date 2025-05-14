@@ -10,7 +10,7 @@
 
 ## 📝 Project Overview
 
-**WellSaid** is a local-first, privacy-respecting smart reply tool for iMessage. It leverages AI (OpenAI GPT-4 and local LLMs via Khoj) to help you craft thoughtful, emotionally intelligent responses to your partner's texts—right from your own device. WellSaid summarizes recent conversations and suggests 2–3 natural, emotionally aware replies in your own voice, helping you communicate with empathy and clarity.
+**WellSaid** is a smart reply tool for iMessage. It leverages AI to help you craft thoughtful, emotionally intelligent responses to your partner's texts, right from your own device. WellSaid summarizes recent conversations and suggests 2–3 natural, emotionally aware replies in your own voice, helping you communicate with empathy and clarity.
 
 ---
 
@@ -19,7 +19,6 @@
 - 📱 **iMessage Smart Reply**: Summarizes recent conversations and suggests emotionally intelligent responses.
 - 🎭 **Customizable Tone**: Choose your reply tone (gentle, honest, funny, reassuring, concise).
 - 🧠 **Context Awareness**: Add context about your relationship or conversation for better suggestions.
-- 🛡️ **Local-First & Private**: Runs locally; your messages never leave your machine unless you use an external LLM.
 - ⚡ **Fast & Modern UI**: Clean, responsive web interface with instant feedback.
 - 🔑 **Easy Setup**: Simple environment configuration and one-command start.
 
@@ -31,7 +30,7 @@
 - Node.js (v18+ recommended)
 - npm
 - Access to your iMessage chat.db (macOS)
-- OpenAI API key (or local LLM via Khoj)
+- OpenAI API key
 
 ### Installation
 
@@ -67,23 +66,8 @@ The app will be available at [http://localhost:2309](http://localhost:2309).
 - **Frontend**: HTML, CSS, Vanilla JS (public/)
 - **Backend**: Node.js, Express, TypeScript
 - **Database**: SQLite (reads iMessage chat.db)
-- **AI**: OpenAI GPT-4 API, Khoj (local LLM support)
+- **AI**: OpenAI GPT-4 API
 - **Authentication**: Simple username/password authentication
-
----
-
-## 📁 Project Structure
-
-```
-well-said/
-├── public/        # Frontend (HTML, CSS, JS)
-├── src/           # Backend (TypeScript)
-│   └── lib/       # AI, message, and prompt logic
-├── assets/        # Images for README and app
-├── .env.example   # Example environment variables
-├── package.json   # Dependencies and scripts
-└── README.md
-```
 
 ---
 
@@ -96,7 +80,6 @@ OPENAI_API_KEY=your-key-here
 OPENAI_MODEL=gpt-4
 OPENAI_TEMPERATURE=0.7
 PARTNER_PHONE=+19999999999
-KHOJ_API_URL=http://127.0.0.1:42110/api/chat
 ```
 
 ---
@@ -110,4 +93,3 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 ## 📄 License
 
 MIT License. See [LICENSE](./LICENSE) for details.
-
