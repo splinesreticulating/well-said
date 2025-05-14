@@ -143,8 +143,8 @@ describe("API Routes", () => {
         test("returns proper response with messages", async () => {
             // Arrange
             const agent = request.agent(app)
+            await loginUser(agent as unknown as SuperAgentTest)
             // Cast agent to any to avoid type issues between supertest versions
-            await loginUser(agent as any)
             
             const mockAIResponse = {
                 summary: "Test summary",
@@ -178,7 +178,7 @@ describe("API Routes", () => {
             // Arrange
             const agent = request.agent(app)
             // Cast agent to any to avoid type issues between supertest versions
-            await loginUser(agent as any)
+            await loginUser(agent as unknown as SuperAgentTest)
             
             // Setup mock to return empty array
             ;(messagesModule.getRecentMessages as jest.Mock).mockResolvedValue([])
@@ -205,7 +205,7 @@ describe("API Routes", () => {
     
     // Helper to login a test user with the agent
     // Using any type to avoid compatibility issues with different supertest versions
-    async function loginUser(agent: any) {
+    async function loginUser(agent: SuperAgentTest) {
         await agent
             .post("/login")
             .send(testCredentials)
