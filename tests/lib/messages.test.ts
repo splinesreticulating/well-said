@@ -1,21 +1,19 @@
 import type { Message } from "../../src/lib/messages"
 
-// Constants for test data
-const TEST_TIMESTAMP_1 = "2023-01-01 10:00:00"
-const TEST_TIMESTAMP_2 = "2023-01-01 10:01:00"
-const TEST_SENDER_ME = "me"
-const TEST_SENDER_PARTNER = "partner"
-const TEST_MESSAGE_1 = "Hello there!"
-const TEST_MESSAGE_2 = "Hi! How are you?"
-
-// Constants for date testing
-const TEST_START_DATE = "2023-01-01T00:00:00Z"
-const TEST_END_DATE = "2023-01-31T23:59:59Z"
-const APPLE_EPOCH_DATE = "2001-01-01T00:00:00Z"
-const ISO_TEST_DATE = "2023-01-01T00:00:00Z"
-
-// Constants for environment
-const TEST_PARTNER_PHONE = "+15551234567"
+// Import shared constants
+import {
+    TEST_TIMESTAMP_1,
+    TEST_TIMESTAMP_2,
+    TEST_SENDER_ME,
+    TEST_SENDER_PARTNER,
+    TEST_MESSAGE_1,
+    TEST_MESSAGE_2,
+    TEST_START_DATE,
+    TEST_END_DATE,
+    APPLE_EPOCH_DATE,
+    ISO_TEST_DATE,
+    TEST_PARTNER_PHONE
+} from '../testConstants'
 
 // Mock SQLite database
 jest.mock("sqlite", () => ({

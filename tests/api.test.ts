@@ -15,25 +15,24 @@ declare module "express-session" {
     }
 }
 
-// Constants for routes
-const LOGIN_ROUTE = "/login"
-const REPLIES_ROUTE = "/replies"
+// Import shared constants
+import {
+    LOGIN_ROUTE,
+    REPLIES_ROUTE,
+    STATUS_OK,
+    STATUS_UNAUTHORIZED,
+    STATUS_SERVER_ERROR,
+    ERROR_UNAUTHORIZED,
+    ERROR_INVALID_CREDENTIALS,
+    ERROR_SERVER,
+    INFO_NO_MESSAGES,
+    TONE_FRIENDLY,
+    TEST_CONTEXT,
+    DEFAULT_TONE
+} from './testConstants'
 
-// Constants for status codes
-const STATUS_OK = 200
-const STATUS_UNAUTHORIZED = 401
-const STATUS_SERVER_ERROR = 500
-
-// Constants for error messages
-const ERROR_UNAUTHORIZED = "Unauthorized"
-const ERROR_INVALID_CREDENTIALS = "Invalid credentials"
-const ERROR_SERVER = "Something went wrong."
-const INFO_NO_MESSAGES = "No messages to summarize."
-
-// Constants for test data
-const TEST_TONE = "friendly"
-const TEST_CONTEXT = "test context"
-const DEFAULT_TONE = "gentle"
+// Constants specific to this test file
+const TEST_TONE = TONE_FRIENDLY
 
 // Mock external modules
 jest.mock("../src/lib/messages")

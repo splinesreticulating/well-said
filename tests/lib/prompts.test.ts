@@ -1,20 +1,24 @@
 import { buildReplyPrompt, permanentContext } from "../../src/lib/prompts"
 
-// Constants for test data
-const TEST_TONE_FRIENDLY = "friendly"
-const TEST_TONE_DIRECT = "direct"
+// Import shared constants
+import {
+    TONE_FRIENDLY,
+    TONE_DIRECT,
+    SUMMARY_TAG,
+    REPLY_1_TAG,
+    REPLY_2_TAG,
+    REPLY_3_TAG,
+    TONE_PREFIX,
+    ADDITIONAL_CONTEXT_PREFIX,
+    SYSTEM_INSTRUCTION
+} from '../testConstants'
+
+// Constants specific to this test file
+const TEST_TONE_FRIENDLY = TONE_FRIENDLY
+const TEST_TONE_DIRECT = TONE_DIRECT
 const TEST_CONTEXT = "We're planning a vacation next week"
 const TEST_MESSAGE_1 = "Me: Hey, how was your day?"
 const TEST_MESSAGE_2 = "Partner: It was good! Had a productive meeting."
-
-// Constants for expected output fragments
-const SUMMARY_TAG = "Summary: <summary>"
-const REPLY_1_TAG = "Reply 1: <reply>"
-const REPLY_2_TAG = "Reply 2: <reply>"
-const REPLY_3_TAG = "Reply 3: <reply>"
-const TONE_PREFIX = "Tone: "
-const ADDITIONAL_CONTEXT_PREFIX = "Additional context: "
-const SYSTEM_INSTRUCTION = "Act as my therapist"
 
 describe("Prompts Module", () => {
     describe("buildReplyPrompt function", () => {

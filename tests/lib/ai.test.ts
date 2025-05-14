@@ -1,27 +1,25 @@
-// Constants for API and model configuration
-const TEST_API_KEY = 'test-api-key';
-const TEST_MODEL = 'gpt-4';
-const OPENAI_API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+// Import shared constants
+import {
+    TEST_API_KEY,
+    TEST_MODEL,
+    OPENAI_API_ENDPOINT,
+    TEST_TIMESTAMP_1,
+    TEST_TIMESTAMP_2,
+    TEST_SENDER_ME,
+    TEST_SENDER_PARTNER,
+    TEST_MESSAGE_1,
+    TEST_MESSAGE_2,
+    TONE_FRIENDLY,
+    TONE_PROFESSIONAL,
+    TEST_CONTEXT,
+    ERROR_API_KEY,
+    ERROR_API_KEY_SETUP,
+    ERROR_RESPONSE,
+    MOCKED_SUMMARY
+} from '../testConstants'
 
-// Constants for test data
-const TEST_TIMESTAMP_1 = "2023-01-01 10:00:00";
-const TEST_TIMESTAMP_2 = "2023-01-01 10:01:00";
-const TEST_SENDER_ME = "me";
-const TEST_SENDER_PARTNER = "partner";
-const TEST_MESSAGE_1 = "Hello there!";
-const TEST_MESSAGE_2 = "Hi! How are you?";
-
-// Constants for tones and contexts
-const TONE_FRIENDLY = "friendly";
-const TONE_PROFESSIONAL = "professional";
-const TEST_CONTEXT = "We're discussing a work project";
-
-// Constants for response texts
-const ERROR_API_KEY = "OpenAI API key is not configured.";
-const ERROR_API_KEY_SETUP = "Please set up your OpenAI API key in the .env file.";
-const ERROR_RESPONSE = "(Sorry, I had trouble generating a response.)";
+// Constants specific to this test file
 const TEST_SUMMARY = "This is a test summary.";
-const MOCKED_SUMMARY = "Mocked summary";
 
 // Set environment variables before importing the module
 process.env.OPENAI_API_KEY = TEST_API_KEY;

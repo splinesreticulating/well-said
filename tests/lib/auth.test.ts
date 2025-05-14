@@ -1,22 +1,18 @@
 import auth from "../../src/lib/auth"
 import type { Request, Response } from "express"
 
-// Constants for routes and paths
-const LOGIN_PATH = "/login.html"
-const LOGIN_ERROR_PATH = "/login.html?error=auth"
-const API_PATH_PREFIX = "/api/"
-
-// Constants for status codes
-const STATUS_OK = 200
-const STATUS_UNAUTHORIZED = 401
-
-// Constants for error messages
-const ERROR_UNAUTHORIZED = "Unauthorized"
-const ERROR_INVALID_CREDENTIALS = "Invalid credentials"
-
-// Constants for test credentials
-const TEST_USERNAME = "testuser"
-const TEST_PASSWORD = "testpass"
+// Import shared constants
+import {
+    LOGIN_PATH,
+    LOGIN_ERROR_PATH,
+    API_PATH_PREFIX,
+    STATUS_OK,
+    STATUS_UNAUTHORIZED,
+    ERROR_UNAUTHORIZED,
+    ERROR_INVALID_CREDENTIALS,
+    TEST_USERNAME,
+    TEST_PASSWORD
+} from '../testConstants'
 
 describe("Auth Module", () => {
     // Test helpers to reduce duplication
