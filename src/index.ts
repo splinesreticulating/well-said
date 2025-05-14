@@ -7,6 +7,7 @@ import { getSuggestedReplies } from "./lib/ai"
 import auth from "./lib/auth"
 import cors from "cors"
 import session from "express-session"
+import logger from "./lib/logger"
 
 const app = express()
 const PORT = 2309
@@ -89,5 +90,5 @@ app.post("/replies", async (req, res) => {
 })
 
 app.listen(PORT, () => {
-    console.log(`✅ SmartReply app listening at http://localhost:${PORT}`)
+    logger.info(`✅ WellSaid app listening at http://localhost:${PORT}`)
 })
