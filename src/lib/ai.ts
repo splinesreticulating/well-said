@@ -67,7 +67,7 @@ export const getSuggestedReplies = async (
                 errorBody = "(could not read body)"
             }
             logger.error(
-                `OpenAI API error: ${response.status} - ${errorBody.slice(0, 500)}`,
+                `OpenAI API error: ${response.status} - ${errorBody}`,
             )
             throw new Error(`OpenAI API error: ${response.status}`)
         }
