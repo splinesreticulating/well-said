@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WellSaid - Login</title>
-  <!-- Emoji favicon -->
+  <title>Login</title>
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💬</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quintessential&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     .login-container {
@@ -46,8 +45,6 @@
   </style>
 </head>
 <body>
-  <h1>WellSaid</h1>
-  
   <div class="login-container">
     <h2>Login</h2>
     <div id="error-message" class="error-message">Invalid username or password</div>
@@ -60,20 +57,19 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const loginForm = document.getElementById('login-form');
-      const errorMessage = document.getElementById('error-message');
-      
-      // Check if there's an error parameter in the URL
-      const urlParams = new URLSearchParams(window.location.search);
+      const loginForm = document.getElementById('login-form')
+      const errorMessage = document.getElementById('error-message')
+      const urlParams = new URLSearchParams(window.location.search)
+
       if (urlParams.get('error') === 'auth') {
-        errorMessage.style.display = 'block';
+        errorMessage.style.display = 'block'
       }
       
       loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value
+        const password = document.getElementById('password').value
         
         try {
           const response = await fetch('/login', {
@@ -82,21 +78,19 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({ username, password })
-          });
+          })
           
           if (response.ok) {
-            // Redirect to main page on successful login
-            window.location.href = '/';
+            window.location.href = '/'
           } else {
-            // Show error message
-            errorMessage.style.display = 'block';
+            errorMessage.style.display = 'block'
           }
         } catch (err) {
-          console.error('Login error:', err);
-          errorMessage.style.display = 'block';
+          console.error('Login error:', err)
+          errorMessage.style.display = 'block'
         }
-      });
-    });
+      })
+    })
   </script>
 </body>
 </html>

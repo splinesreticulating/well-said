@@ -54,10 +54,9 @@ h1 {
     color: var(--primary);
     margin-bottom: 1.5rem;
     font-size: 2.8rem;
-    border-bottom: 3px solid var(--primary-light);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
     display: inline-block;
-    font-family: "Quintessential", cursive;
+    font-family: "Great Vibes", cursive;
     font-weight: normal;
     letter-spacing: 0.02em;
 }
