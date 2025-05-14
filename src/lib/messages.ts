@@ -2,6 +2,7 @@ import sqlite3 from "sqlite3"
 import { open } from "sqlite"
 import os from "node:os"
 import path from "node:path"
+import logger from "./logger"
 
 export interface Message {
     sender: string
@@ -71,7 +72,7 @@ export const getRecentMessages = async (
 
     await db.close()
 
-    console.log(
+    logger.info(
         `📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`,
     )
 

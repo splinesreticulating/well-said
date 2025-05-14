@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express"
 import session from "express-session"
+import logger from "./logger"
 
 // Define auth middleware and handlers as an object
 const auth = {
@@ -45,7 +46,7 @@ const auth = {
         if (req.session) {
             req.session.destroy((err: Error) => {
                 if (err) {
-                    console.error("Logout error:", err)
+                    logger.error("Logout error:", err)
                 }
                 res.redirect("/login.html")
             })
