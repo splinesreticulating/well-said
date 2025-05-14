@@ -1,6 +1,4 @@
-import { getRecentMessages } from "../../src/lib/messages"
 import type { Message } from "../../src/lib/messages"
-import * as sqlite from "sqlite"
 
 // Constants for test data
 const TEST_TIMESTAMP_1 = "2023-01-01 10:00:00"

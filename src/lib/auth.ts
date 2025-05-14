@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express"
-import session from "express-session"
 import logger from "./logger"
 
 // Define auth middleware and handlers as an object

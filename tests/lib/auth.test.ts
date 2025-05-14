@@ -1,5 +1,5 @@
 import auth from "../../src/lib/auth"
-import type { Request, Response, NextFunction } from "express"
+import type { Request, Response } from "express"
 
 // Constants for routes and paths
 const LOGIN_PATH = "/login.html"
