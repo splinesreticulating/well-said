@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * Centralized utility function for copy-to-clipboard with visual feedback
  * Handles both Clipboard API and execCommand fallback. Shows feedback on the button.
  */
-function copyToClipboard(
+const copyToClipboard = (
     text: string,
     button: HTMLButtonElement,
     opts?: {
@@ -129,7 +129,7 @@ function copyToClipboard(
         feedbackType?: "icon" | "text";
         feedbackDuration?: number;
     }
-) {
+): void => {
     const {
         successIcon = '',
         failIcon = '',
@@ -234,7 +234,7 @@ function copyToClipboard(
     }
 }
 
-function createCopyButton(getValue: () => string): HTMLButtonElement {
+const createCopyButton = (getValue: () => string): HTMLButtonElement => {
     const btn = document.createElement('button');
     btn.textContent = 'Copy';
     btn.className = "copy-btn";
@@ -259,7 +259,7 @@ interface ReplyResponse {
  * Show the pulsating brain loading indicator in the conversation area
  * @param convoDiv - The conversation container
  */
-function showLoadingIndicator(convoDiv: HTMLElement) {
+const showLoadingIndicator = (convoDiv: HTMLElement): void => {
     clearSummaryAndCount(convoDiv);
     const loadingDiv = document.createElement("div");
     loadingDiv.className = "summary";
@@ -272,7 +272,7 @@ function showLoadingIndicator(convoDiv: HTMLElement) {
  * Remove summary and message count from the conversation area
  * @param convoDiv - The conversation container
  */
-function clearSummaryAndCount(convoDiv: HTMLElement) {
+const clearSummaryAndCount = (convoDiv: HTMLElement): void => {
     const oldSummary = convoDiv.querySelector(".summary");
     if (oldSummary) oldSummary.remove();
     const oldCount = convoDiv.querySelector(".message-count");
@@ -286,7 +286,7 @@ function clearSummaryAndCount(convoDiv: HTMLElement) {
  * @param summary - The summary HTML string
  * @param messageCount - The number of messages
  */
-function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCount: number) {
+const renderSummaryAndCount = (convoDiv: HTMLElement, summary: string, messageCount: number): void => {
     clearSummaryAndCount(convoDiv);
     const summaryDiv = document.createElement("div");
     summaryDiv.className = "summary";
@@ -308,7 +308,7 @@ function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCo
  * @param convoDiv - The conversation container element
  * @param message - The error message to display
  */
-function renderErrorIndicator(convoDiv: HTMLElement, message = "Failed to load replies") {
+const renderErrorIndicator = (convoDiv: HTMLElement, message = "Failed to load replies"): void => {
     clearSummaryAndCount(convoDiv);
     const errorDiv = document.createElement("div");
     errorDiv.className = "summary";
@@ -326,7 +326,7 @@ function renderErrorIndicator(convoDiv: HTMLElement, message = "Failed to load r
  * @param error - The error object
  * @param userMessage - The message to display to the user
  */
-function logAndShowError(error: unknown, userMessage: string) {
+const logAndShowError = (error: unknown, userMessage: string): void => {
     console.error("[WellSaid]", error);
     const convoDiv = utils.getById("conversation");
     if (convoDiv) renderErrorIndicator(convoDiv, userMessage);
@@ -338,7 +338,7 @@ function logAndShowError(error: unknown, userMessage: string) {
  * Main fetchReplies function
  * Fetches replies from the API and updates the UI.
  */
-async function fetchReplies(): Promise<void> {
+const fetchReplies = async (): Promise<void> => {
     const suggDiv = utils.getById("suggestions");
     const convoDiv = utils.getById("conversation");
 
@@ -394,7 +394,7 @@ async function fetchReplies(): Promise<void> {
  * @param suggDiv - The suggestions container
  * @param replies - Array of reply strings
  */
-function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
+const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
     if (!suggDiv) return
 
     suggDiv.innerHTML = ""
@@ -429,7 +429,7 @@ interface ReplyResponse {
  * @param suggDiv - The parent suggestions container
  * @returns The reply div element
  */
-function createReplyDiv(reply: string): HTMLDivElement {
+const createReplyDiv = (reply: string): HTMLDivElement => {
     const div = document.createElement("div");
     const copyBtn = document.createElement("button");
     const replyText = document.createElement("div");
