@@ -2,6 +2,8 @@
  * WellSaid App Main Script
  * Organized for clarity and maintainability.
  *
+ * NOTE: For best type safety, enable "strict": true in your tsconfig.json.
+ *
  * Sections:
  * 1. DOM & Persistence Helpers
  * 2. Event Handlers
@@ -17,10 +19,10 @@
 /** Utility helpers for DOM and persistence */
 const utils = {
     /**
-     * Get an element by ID (shorthand for document.getElementById)
+     * Get an element by ID (shorthand for document.getElementById), with type safety
      */
-    getById(id: string): HTMLElement | null {
-        return document.getElementById(id);
+    getById<T extends HTMLElement = HTMLElement>(id: string): T | null {
+        return document.getElementById(id) as T | null;
     },
 
     /**
@@ -58,8 +60,8 @@ const utils = {
  * Loads and saves context to localStorage, and expands details on focus.
  */
 const setupInputPersistence = (): void => {
-    const contextInput = utils.getById("context-input") as HTMLTextAreaElement | null;
-    const contextDetails = utils.getById("context-details") as HTMLDetailsElement | null;
+    const contextInput = utils.getById<HTMLTextAreaElement>("context-input");
+    const contextDetails = utils.getById<HTMLDetailsElement>("context-details");
     if (!contextInput) return;
     contextInput.value = utils.loadContext();
     utils.on(contextInput, "input", (e: Event) =>
@@ -137,7 +139,7 @@ function copyToClipboard(
     } = opts || {};
 
     // Helper to set feedback
-    function setFeedback(type: 'success' | 'fail' | 'normal') {
+    const setFeedback = (type: 'success' | 'fail' | 'normal') => {
         if (feedbackType === 'icon') {
             if (type === 'success') {
                 button.innerHTML = successIcon;
@@ -347,8 +349,8 @@ async function fetchReplies(): Promise<void> {
     // Get selected tone from radio buttons
     const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
     const tone = toneRadio ? toneRadio.value : "gentle";
-    const context = (utils.getById("context-input") as HTMLTextAreaElement)?.value || "";
-    const windowVal = (utils.getById("window-back") as HTMLSelectElement)?.value || "3d";
+    const context = utils.getById<HTMLTextAreaElement>("context-input")?.value || "";
+    const windowVal = utils.getById<HTMLSelectElement>("window-back")?.value || "3d";
     const now = new Date();
     let start: Date;
     if (windowVal.endsWith("h")) {
@@ -399,7 +401,7 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
 
     for (const reply of replies) {
         if (reply && reply.trim() !== "") {
-            suggDiv.appendChild(createReplyDiv(reply, suggDiv))
+            suggDiv.appendChild(createReplyDiv(reply))
         }
     }
 }
@@ -427,7 +429,7 @@ interface ReplyResponse {
  * @param suggDiv - The parent suggestions container
  * @returns The reply div element
  */
-function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
+function createReplyDiv(reply: string): HTMLDivElement {
     const div = document.createElement("div");
     const copyBtn = document.createElement("button");
     const replyText = document.createElement("div");
