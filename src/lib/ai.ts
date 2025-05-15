@@ -78,21 +78,26 @@ export const getSuggestedReplies = async (
         // Extract summary as everything before the first reply
         const summary = parseSummaryToHumanReadable(rawOutput)
         
-        // Match both '**Reply 1:**' and 'Reply 1:'
-        const replyMatches = [
-            ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
-            ...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g),
-        ]
-        
-        const replies = replyMatches.map((m) =>
-            m[1]
+        // Extract replies using a combined regex and clean them
+        function cleanReply(text: string): string {
+            return text
                 .replace(/^\*+\s*/, "") // Remove leading asterisks and spaces
-                .replace(/^"/, "") // Remove leading quote
-                .replace(/"$/, "") // Remove trailing quote
-                .trim(),
-        )
-        
-        return { summary, replies, messageCount: messages.length }
+                .replace(/^"/, "")      // Remove leading quote
+                .replace(/"$/, "")      // Remove trailing quote
+                .trim();
+        }
+
+        // Match both '**Reply 1:**' and 'Reply 1:' in one regex
+        const replyPattern = /\*\*Reply\s*\d:\*\*\s*(.*)|Reply\s*\d:\s*(.*)/g;
+        const replies = Array.from(rawOutput.matchAll(replyPattern))
+            .map((m) => {
+                // Type assertion: matchAll returns IterableIterator<RegExpMatchArray | undefined>
+                const match = m as RegExpMatchArray;
+                return cleanReply(match[1] || match[2] || "");
+            })
+            .filter(Boolean);
+
+        return { summary, replies, messageCount: messages.length };
     } catch (err) {
         logger.error("Error generating replies:", err)
         return {
