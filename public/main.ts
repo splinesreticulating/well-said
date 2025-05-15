@@ -37,36 +37,36 @@ const utils = {
 };
 
 /** Setup input persistence for the context textarea */
-function setupInputPersistence(): void {
+const setupInputPersistence = (): void => {
     const contextInput = utils.getById("context-input") as HTMLTextAreaElement | null;
     const contextDetails = utils.getById("context-details") as HTMLDetailsElement | null;
     if (!contextInput) return;
     contextInput.value = utils.loadContext();
     utils.on(contextInput, "input", (e: Event) =>
-        utils.saveContext((e.target as HTMLTextAreaElement)?.value)
+        utils.saveContext((e.target as HTMLTextAreaElement)?.value ?? "")
     );
     utils.on(contextInput, "focus", () => {
         if (contextDetails) contextDetails.open = true;
     });
-}
+};
 
 /** Setup tone radio group refresh styling */
 /** Toggle the 'active' class on the correct tone label */
-function toggleActiveToneLabel(e: Event): void {
+const toggleActiveToneLabel = (e: Event): void => {
     const labels = document.querySelectorAll("#tone-radio-group label");
     for (const label of labels) label.classList.remove("active");
-    const label = (e.target as HTMLElement).closest("label") as HTMLElement;
+    const label = (e.target as HTMLElement).closest("label") as HTMLElement | null;
     if (label) label.classList.add("active");
-}
+};
 
 /** Setup tone radio group refresh styling */
-function setupSelectRefresh(): void {
+const setupSelectRefresh = (): void => {
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
     for (const radio of toneRadios) {
         (radio as HTMLInputElement).addEventListener("change", toggleActiveToneLabel);
     }
-}
+};
 
 
 document.addEventListener("DOMContentLoaded", () => {
