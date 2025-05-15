@@ -245,13 +245,30 @@ function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCo
     convoDiv.appendChild(countDiv);
 }
 
-/** Render an error indicator in the conversation area */
-function renderErrorIndicator(convoDiv: HTMLElement) {
+/**
+ * Render an error indicator in the conversation area with a custom message
+ * @param convoDiv The conversation container element
+ * @param message The error message to display
+ */
+function renderErrorIndicator(convoDiv: HTMLElement, message = "Failed to load replies") {
     clearSummaryAndCount(convoDiv);
     const errorDiv = document.createElement("div");
     errorDiv.className = "summary";
-    errorDiv.innerHTML = `<div class='loading-indicator' style='color: var(--accent);'>❌ Failed to load replies</div>`;
+    errorDiv.innerHTML = `<div class='loading-indicator' style='color: var(--accent);'>❌ ${message}</div>`;
     convoDiv.appendChild(errorDiv);
+}
+
+/**
+ * Log the error to the console and show a user-friendly message in the UI
+ * @param error The error object
+ * @param userMessage The message to display to the user
+ */
+function logAndShowError(error: unknown, userMessage: string) {
+    console.error("[WellSaid]", error);
+    const convoDiv = utils.getById("conversation");
+    if (convoDiv) renderErrorIndicator(convoDiv, userMessage);
+    const suggDivFinal = utils.getById("suggestions");
+    if (suggDivFinal) suggDivFinal.innerHTML = "";
 }
 
 async function fetchReplies(): Promise<void> {
@@ -300,14 +317,7 @@ async function fetchReplies(): Promise<void> {
         }
         return;
     } catch (error) {
-        // Show error in the summary area
-        const convoDiv = utils.getById("conversation");
-        if (convoDiv) renderErrorIndicator(convoDiv);
-        // Clear suggestions area
-        const suggDivFinal = utils.getById("suggestions");
-        if (suggDivFinal) {
-            suggDivFinal.innerHTML = "";
-        }
+        logAndShowError(error, "Failed to load replies. Please try again or check your connection.");
         return;
     }
 }
