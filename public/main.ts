@@ -1,49 +1,70 @@
-// Utility functions
-const $ = (id: string): HTMLElement | null => document.getElementById(id)
-const on = <K extends keyof HTMLElementEventMap>(
-    el: HTMLElement | null,
-    event: K,
-    handler: (ev: HTMLElementEventMap[K]) => void,
-): void => el?.addEventListener(event, handler)
+/** Utility helpers for DOM and persistence */
+const utils = {
+    /**
+     * Get an element by ID (shorthand for document.getElementById)
+     */
+    getById(id: string): HTMLElement | null {
+        return document.getElementById(id);
+    },
 
-const saveContext = (val: string): void =>
-    localStorage.setItem("well-said_context", val)
-const loadContext = (): string =>
-    localStorage.getItem("well-said_context") || ""
+    /**
+     * Add an event listener to an element, if it exists
+     */
+    on<K extends keyof HTMLElementEventMap>(
+        el: HTMLElement | null,
+        event: K,
+        handler: (ev: HTMLElementEventMap[K]) => void
+    ): void {
+        el?.addEventListener(event, handler);
+    },
 
-const setupInputPersistence = (): void => {
-    const contextInput = $("context-input") as HTMLTextAreaElement | null
-    const contextDetails = $("context-details") as HTMLDetailsElement | null
+    /**
+     * Save context string to localStorage
+     */
+    saveContext(val: string): void {
+        localStorage.setItem("well-said_context", val);
+    },
 
-    if (!contextInput) return
+    /**
+     * Load context string from localStorage
+     */
+    loadContext(): string {
+        return localStorage.getItem("well-said_context") || "";
+    },
+};
 
-    contextInput.value = loadContext()
-
-    on(contextInput, "input", (e) =>
-        saveContext((e.target as HTMLTextAreaElement)?.value),
-    )
-    on(contextInput, "focus", () => {
-        if (contextDetails) contextDetails.open = true
-    })
+/** Setup input persistence for the context textarea */
+function setupInputPersistence(): void {
+    const contextInput = utils.getById("context-input") as HTMLTextAreaElement | null;
+    const contextDetails = utils.getById("context-details") as HTMLDetailsElement | null;
+    if (!contextInput) return;
+    contextInput.value = utils.loadContext();
+    utils.on(contextInput, "input", (e) =>
+        utils.saveContext((e.target as HTMLTextAreaElement)?.value)
+    );
+    utils.on(contextInput, "focus", () => {
+        if (contextDetails) contextDetails.open = true;
+    });
 }
 
-const setupSelectRefresh = (): void => {
+/** Setup tone radio group refresh styling */
+function setupSelectRefresh(): void {
     // Listen for changes to the tone radio group
-    const toneRadios = document.querySelectorAll('input[name="tone"]')
-
+    const toneRadios = document.querySelectorAll('input[name="tone"]');
     for (const radio of toneRadios) {
-        ;(radio as HTMLInputElement).addEventListener("change", (e) => {
+        (radio as HTMLInputElement).addEventListener("change", (e) => {
             // Update active class for styling
-            const labels = document.querySelectorAll("#tone-radio-group label")
+            const labels = document.querySelectorAll("#tone-radio-group label");
             for (const label of labels) {
-                label.classList.remove("active")
+                label.classList.remove("active");
             }
-            ;(
+            (
                 (e.target as HTMLElement).closest("label") as HTMLElement
-            ).classList.add("active")
-        })
+            ).classList.add("active");
+        });
     }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence()
