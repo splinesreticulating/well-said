@@ -51,20 +51,20 @@ function setupInputPersistence(): void {
 }
 
 /** Setup tone radio group refresh styling */
+/** Toggle the 'active' class on the correct tone label */
+function toggleActiveToneLabel(e: Event) {
+    const labels = document.querySelectorAll("#tone-radio-group label");
+    for (const label of labels) label.classList.remove("active");
+    const label = (e.target as HTMLElement).closest("label") as HTMLElement;
+    if (label) label.classList.add("active");
+}
+
+/** Setup tone radio group refresh styling */
 function setupSelectRefresh(): void {
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
     for (const radio of toneRadios) {
-        (radio as HTMLInputElement).addEventListener("change", (e) => {
-            // Update active class for styling
-            const labels = document.querySelectorAll("#tone-radio-group label");
-            for (const label of labels) {
-                label.classList.remove("active");
-            }
-            (
-                (e.target as HTMLElement).closest("label") as HTMLElement
-            ).classList.add("active");
-        });
+        (radio as HTMLInputElement).addEventListener("change", toggleActiveToneLabel);
     }
 }
 
