@@ -12,7 +12,11 @@ import logger from "./lib/logger"
 const app = express()
 const PORT = 2309
 
+// =============================
 // Session configuration
+// =============================
+// IMPORTANT: For production, set SESSION_SECRET to a long, random value in your environment.
+// The fallback is only suitable for development/testing.
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "wellsaid-secret-key",
@@ -25,6 +29,12 @@ app.use(
     }),
 )
 
+// =============================
+// CORS configuration
+// =============================
+// NOTE: In production, restrict CORS origins to trusted domains only.
+// Example:
+// app.use(cors({ origin: 'https://yourdomain.com' }))
 app.use(cors())
 app.use(express.json())
 
