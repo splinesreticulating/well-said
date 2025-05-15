@@ -215,30 +215,52 @@ interface ReplyResponse {
 }
 
 // Main fetchReplies function, using centralized constants and utils
+/** Show the pulsating brain loading indicator in the conversation area */
+function showLoadingIndicator(convoDiv: HTMLElement) {
+    clearSummaryAndCount(convoDiv);
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "summary";
+    loadingDiv.innerHTML = `<div class="loading-indicator" aria-label="Loading"><span role="img" aria-label="brain" style="display:inline-block;">🧠</span></div>`;
+    convoDiv.appendChild(loadingDiv);
+}
+
+/** Remove summary and message count from the conversation area */
+function clearSummaryAndCount(convoDiv: HTMLElement) {
+    const oldSummary = convoDiv.querySelector(".summary");
+    if (oldSummary) oldSummary.remove();
+    const oldCount = convoDiv.querySelector(".message-count");
+    if (oldCount) oldCount.remove();
+}
+
+/** Render the summary and message count in the conversation area */
+function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCount: number) {
+    clearSummaryAndCount(convoDiv);
+    const summaryDiv = document.createElement("div");
+    summaryDiv.className = "summary";
+    summaryDiv.innerHTML = summary;
+    convoDiv.appendChild(summaryDiv);
+    const countDiv = document.createElement("div");
+    countDiv.className = "message-count";
+    countDiv.textContent = `${messageCount} messages`;
+    convoDiv.appendChild(countDiv);
+}
+
+/** Render an error indicator in the conversation area */
+function renderErrorIndicator(convoDiv: HTMLElement) {
+    clearSummaryAndCount(convoDiv);
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "summary";
+    errorDiv.innerHTML = `<div class='loading-indicator' style='color: var(--accent);'>❌ Failed to load replies</div>`;
+    convoDiv.appendChild(errorDiv);
+}
+
 async function fetchReplies(): Promise<void> {
     const suggDiv = utils.getById("suggestions");
     const convoDiv = utils.getById("conversation");
 
     // Clear the suggestions area
-    if (suggDiv) {
-        suggDiv.innerHTML = "";
-    }
-
-    // Show loading indicator in the summary area
-    if (convoDiv) {
-        // Remove existing summary if any
-        const oldSummary = convoDiv.querySelector(".summary");
-        if (oldSummary) oldSummary.remove();
-
-        // Add loading indicator to conversation area
-        const loadingDiv = document.createElement("div");
-        loadingDiv.className = "summary";
-        loadingDiv.innerHTML = `<div class="loading-indicator" aria-label="Loading"><span role="img" aria-label="brain" style="display:inline-block;">🧠</span></div>`;
-        convoDiv.appendChild(loadingDiv);
-
-        const oldCount = convoDiv.querySelector(".message-count");
-        if (oldCount) oldCount.remove();
-    }
+    if (suggDiv) suggDiv.innerHTML = "";
+    if (convoDiv) showLoadingIndicator(convoDiv);
 
     // Get selected tone from radio buttons
     const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
@@ -268,25 +290,8 @@ async function fetchReplies(): Promise<void> {
         const convoDiv = utils.getById("conversation");
         if (!convoDiv) return;
 
-        // Only update the summary, not the timeframe controls
-        const summaryDiv = document.createElement("div");
-        summaryDiv.className = "summary";
-        summaryDiv.innerHTML = summary;
-
-        // Remove any existing summary
-        const oldSummary = convoDiv.querySelector('.summary');
-        if (oldSummary) oldSummary.remove();
-
-        // Remove any loading indicator
-        const loadingIndicator = convoDiv.querySelector('.loading-indicator');
-        if (loadingIndicator) loadingIndicator.remove();
-
-        convoDiv.appendChild(summaryDiv);
-        // Update message count
-        const countDiv = document.createElement("div");
-        countDiv.className = "message-count";
-        countDiv.textContent = `${messageCount} messages`;
-        convoDiv.appendChild(countDiv);
+        // Render summary and count
+        renderSummaryAndCount(convoDiv, summary, messageCount);
 
         // Show replies
         const suggDivFinal = utils.getById("suggestions");
@@ -297,14 +302,7 @@ async function fetchReplies(): Promise<void> {
     } catch (error) {
         // Show error in the summary area
         const convoDiv = utils.getById("conversation");
-        if (convoDiv) {
-            const oldSummary = convoDiv.querySelector('.summary');
-            if (oldSummary) oldSummary.remove();
-            const errorDiv = document.createElement("div");
-            errorDiv.className = "summary";
-            errorDiv.innerHTML = `<div class='loading-indicator' style='color: var(--accent);'>❌ Failed to load replies</div>`;
-            convoDiv.appendChild(errorDiv);
-        }
+        if (convoDiv) renderErrorIndicator(convoDiv);
         // Clear suggestions area
         const suggDivFinal = utils.getById("suggestions");
         if (suggDivFinal) {
