@@ -2,15 +2,26 @@
  * WellSaid App Main Script
  *
  * Sections:
- * 1. DOM & Persistence Helpers
- * 2. Event Handlers
- * 3. API Logic
+ * 1. Types & Interfaces
+ * 2. DOM & Persistence Helpers
+ * 3. Event Handlers
  * 4. UI Rendering Helpers
- * 5. Types & Interfaces
+ * 5. Main App Initialization
  */
 
 // ================================
-// 1. DOM & Persistence Helpers
+// 1. Types & Interfaces
+// ================================
+
+// Interface for the API reply response
+interface ReplyResponse {
+    summary: string;
+    replies: string[];
+    messageCount: number;
+}
+
+// ================================
+// 2. DOM & Persistence Helpers
 // ================================
 
 // Utility helpers for DOM and persistence
@@ -41,7 +52,7 @@ const utils = {
 };
 
 // ================================
-// 2. Event Handlers
+// 3. Event Handlers
 // ================================
 
 /**
@@ -76,21 +87,6 @@ const setupSelectRefresh = (): void => {
         (radio as HTMLInputElement).addEventListener("change", toggleActiveToneLabel);
     }
 };
-
-
-// ================================
-// 3. Main App Initialization
-// ================================
-
-document.addEventListener("DOMContentLoaded", () => {
-    setupInputPersistence();
-    setupSelectRefresh();
-
-    const goBtn = utils.getById("go-btn");
-    if (goBtn) {
-        goBtn.addEventListener("click", fetchReplies);
-    }
-});
 
 // ================================
 // 4. UI Rendering Helpers
@@ -227,13 +223,6 @@ const createCopyButton = (getValue: () => string): HTMLButtonElement => {
     return btn;
 }
 
-
-interface ReplyResponse {
-    summary: string;
-    replies: string[];
-    messageCount: number;
-}
-
 // Main fetchReplies function, using centralized constants and utils
 const showLoadingIndicator = (convoDiv: HTMLElement): void => {
     clearSummaryAndCount(convoDiv);
@@ -333,36 +322,6 @@ const fetchReplies = async (): Promise<void> => {
         return;
     }
 }
-
-// Render all replies into the suggestions container
-const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
-    if (!suggDiv) return
-
-    suggDiv.innerHTML = ""
-
-    for (const reply of replies) {
-        if (reply && reply.trim() !== "") {
-            suggDiv.appendChild(createReplyDiv(reply))
-        }
-    }
-}
-
-// ================================
-// 5. Types & Interfaces
-// ================================
-
-// Interface for the API reply response
-interface ReplyResponse {
-    summary: string;
-    replies: string[];
-    messageCount: number;
-}
-
-// ================================
-// 6. Main Rendering Logic
-// ================================
-
-
 // Create a reply div with text and copy button
 const createReplyDiv = (reply: string): HTMLDivElement => {
     const div = document.createElement("div");
@@ -400,3 +359,30 @@ const createReplyDiv = (reply: string): HTMLDivElement => {
 
     return div;
 }
+
+// Render all replies into the suggestions container
+const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
+    if (!suggDiv) return
+
+    suggDiv.innerHTML = ""
+
+    for (const reply of replies) {
+        if (reply && reply.trim() !== "") {
+            suggDiv.appendChild(createReplyDiv(reply))
+        }
+    }
+}
+
+// ================================
+// 5. Main App Initialization
+// ================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupInputPersistence();
+    setupSelectRefresh();
+
+    const goBtn = utils.getById("go-btn");
+    if (goBtn) {
+        goBtn.addEventListener("click", fetchReplies);
+    }
+});
