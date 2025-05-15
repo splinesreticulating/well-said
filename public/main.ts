@@ -1,3 +1,6 @@
+/** Centralized app constants for DOM IDs, class names, and keys */
+
+
 /** Utility helpers for DOM and persistence */
 const utils = {
     /**
@@ -67,15 +70,14 @@ function setupSelectRefresh(): void {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    setupInputPersistence()
-    setupSelectRefresh()
+    setupInputPersistence();
+    setupSelectRefresh();
 
-    const goBtn = document.getElementById("go-btn")
-
+    const goBtn = utils.getById("go-btn");
     if (goBtn) {
-        goBtn.addEventListener("click", fetchReplies)
+        goBtn.addEventListener("click", fetchReplies);
     }
-})
+});
 
 // Centralized utility function for copy-to-clipboard with visual feedback
 function copyToClipboard(
@@ -196,7 +198,8 @@ function copyToClipboard(
 function createCopyButton(getValue: () => string): HTMLButtonElement {
     const btn = document.createElement('button');
     btn.textContent = 'Copy';
-    btn.className = 'copy-btn';
+    btn.className = "copy-btn";
+    btn.title = "Copy to clipboard";
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         copyToClipboard(getValue(), btn);
@@ -206,120 +209,108 @@ function createCopyButton(getValue: () => string): HTMLButtonElement {
 
 
 interface ReplyResponse {
-    summary: string
-    replies: string[]
-    messageCount: number
+    summary: string;
+    replies: string[];
+    messageCount: number;
 }
 
+// Main fetchReplies function, using centralized constants and utils
 async function fetchReplies(): Promise<void> {
-    const suggDiv = document.getElementById("suggestions")
-    const convoDiv = document.getElementById("conversation")
+    const suggDiv = utils.getById("suggestions");
+    const convoDiv = utils.getById("conversation");
 
     // Clear the suggestions area
     if (suggDiv) {
-        suggDiv.innerHTML = ""
+        suggDiv.innerHTML = "";
     }
 
     // Show loading indicator in the summary area
     if (convoDiv) {
         // Remove existing summary if any
-        const oldSummary = convoDiv.querySelector(".summary")
-        if (oldSummary) oldSummary.remove()
+        const oldSummary = convoDiv.querySelector(".summary");
+        if (oldSummary) oldSummary.remove();
 
         // Add loading indicator to conversation area
-        const loadingDiv = document.createElement("div")
-        loadingDiv.className = "summary"
-        loadingDiv.innerHTML = '<div class="loading-indicator">🧠</div>'
-        convoDiv.appendChild(loadingDiv)
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "summary";
+        loadingDiv.innerHTML = `<div class="loading-indicator" aria-label="Loading"><span role="img" aria-label="brain" style="display:inline-block;">🧠</span></div>`;
+        convoDiv.appendChild(loadingDiv);
 
-        const oldCount = convoDiv.querySelector(".message-count")
-        if (oldCount) oldCount.remove()
+        const oldCount = convoDiv.querySelector(".message-count");
+        if (oldCount) oldCount.remove();
     }
 
     // Get selected tone from radio buttons
-    const toneRadio = document.querySelector(
-        'input[name="tone"]:checked',
-    ) as HTMLInputElement | null
-    const tone = toneRadio ? toneRadio.value : "gentle"
-    const context =
-        (document.getElementById("context-input") as HTMLTextAreaElement)
-            ?.value || ""
-    const windowVal =
-        (document.getElementById("window-back") as HTMLSelectElement)?.value ||
-        "3d"
-    const now = new Date()
-    let start: Date
-
+    const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
+    const tone = toneRadio ? toneRadio.value : "gentle";
+    const context = (utils.getById("context-input") as HTMLTextAreaElement)?.value || "";
+    const windowVal = (utils.getById("window-back") as HTMLSelectElement)?.value || "3d";
+    const now = new Date();
+    let start: Date;
     if (windowVal.endsWith("h")) {
-        const hours = Number.parseInt(windowVal)
-        start = new Date(now.getTime() - hours * 60 * 60 * 1000)
+        const hours = Number.parseInt(windowVal);
+        start = new Date(now.getTime() - hours * 60 * 60 * 1000);
     } else if (windowVal.endsWith("d")) {
-        const days = Number.parseInt(windowVal)
-        start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+        const days = Number.parseInt(windowVal);
+        start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
     } else {
         // default to shortest window
-        start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)
+        start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
     }
-
-    const startDate = start.toISOString()
-
+    const startDate = start.toISOString();
     try {
         const res = await fetch("/replies", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tone, context, startDate }),
-        })
-
-        const { summary, replies, messageCount } =
-            (await res.json()) as ReplyResponse
-
-        const convoDiv = document.getElementById("conversation")
-        if (!convoDiv) return
+        });
+        const { summary, replies, messageCount } = (await res.json()) as ReplyResponse;
+        const convoDiv = utils.getById("conversation");
+        if (!convoDiv) return;
 
         // Only update the summary, not the timeframe controls
-        const summaryDiv = document.createElement("div")
-
-        summaryDiv.className = "summary"
-        summaryDiv.innerHTML = summary
+        const summaryDiv = document.createElement("div");
+        summaryDiv.className = "summary";
+        summaryDiv.innerHTML = summary;
 
         // Remove any existing summary
-        const oldSummary = convoDiv.querySelector(".summary")
-
-        if (oldSummary) oldSummary.remove()
+        const oldSummary = convoDiv.querySelector('.summary');
+        if (oldSummary) oldSummary.remove();
 
         // Remove any loading indicator
-        const loadingIndicator = convoDiv.querySelector(".loading-indicator")
-        if (loadingIndicator) loadingIndicator.remove()
+        const loadingIndicator = convoDiv.querySelector('.loading-indicator');
+        if (loadingIndicator) loadingIndicator.remove();
 
-        convoDiv.appendChild(summaryDiv)
+        convoDiv.appendChild(summaryDiv);
         // Update message count
-        const countDiv = document.createElement("div")
-
-        countDiv.className = "message-count"
-        countDiv.textContent = `${messageCount} messages`
-        convoDiv.appendChild(countDiv)
+        const countDiv = document.createElement("div");
+        countDiv.className = "message-count";
+        countDiv.textContent = `${messageCount} messages`;
+        convoDiv.appendChild(countDiv);
 
         // Show replies
-        if (suggDiv) {
-            renderReplies(suggDiv, replies)
+        const suggDivFinal = utils.getById("suggestions");
+        if (suggDivFinal) {
+            renderReplies(suggDivFinal, replies);
         }
+        return;
     } catch (error) {
         // Show error in the summary area
+        const convoDiv = utils.getById("conversation");
         if (convoDiv) {
-            const oldSummary = convoDiv.querySelector(".summary")
-            if (oldSummary) oldSummary.remove()
-
-            const errorDiv = document.createElement("div")
-            errorDiv.className = "summary"
-            errorDiv.innerHTML =
-                '<div class="loading-indicator" style="color: var(--accent);">❌ Failed to load replies</div>'
-            convoDiv.appendChild(errorDiv)
+            const oldSummary = convoDiv.querySelector('.summary');
+            if (oldSummary) oldSummary.remove();
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "summary";
+            errorDiv.innerHTML = `<div class='loading-indicator' style='color: var(--accent);'>❌ Failed to load replies</div>`;
+            convoDiv.appendChild(errorDiv);
         }
-
         // Clear suggestions area
-        if (suggDiv) {
-            suggDiv.innerHTML = ""
+        const suggDivFinal = utils.getById("suggestions");
+        if (suggDivFinal) {
+            suggDivFinal.innerHTML = "";
         }
+        return;
     }
 }
 
