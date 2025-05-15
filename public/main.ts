@@ -1,5 +1,18 @@
-/** Centralized app constants for DOM IDs, class names, and keys */
+/**
+ * WellSaid App Main Script
+ * Organized for clarity and maintainability.
+ *
+ * Sections:
+ * 1. DOM & Persistence Helpers
+ * 2. Event Handlers
+ * 3. API Logic
+ * 4. UI Rendering Helpers
+ * 5. Types & Interfaces
+ */
 
+// ================================
+// 1. DOM & Persistence Helpers
+// ================================
 
 /** Utility helpers for DOM and persistence */
 const utils = {
@@ -36,7 +49,14 @@ const utils = {
     },
 };
 
-/** Setup input persistence for the context textarea */
+// ================================
+// 2. Event Handlers
+// ================================
+
+/**
+ * Setup input persistence for the context textarea
+ * Loads and saves context to localStorage, and expands details on focus.
+ */
 const setupInputPersistence = (): void => {
     const contextInput = utils.getById("context-input") as HTMLTextAreaElement | null;
     const contextDetails = utils.getById("context-details") as HTMLDetailsElement | null;
@@ -51,7 +71,10 @@ const setupInputPersistence = (): void => {
 };
 
 /** Setup tone radio group refresh styling */
-/** Toggle the 'active' class on the correct tone label */
+/**
+ * Toggle the 'active' class on the correct tone label
+ * @param e - The event from the radio input
+ */
 const toggleActiveToneLabel = (e: Event): void => {
     const labels = document.querySelectorAll("#tone-radio-group label");
     for (const label of labels) label.classList.remove("active");
@@ -59,7 +82,10 @@ const toggleActiveToneLabel = (e: Event): void => {
     if (label) label.classList.add("active");
 };
 
-/** Setup tone radio group refresh styling */
+/**
+ * Setup tone radio group refresh styling
+ * Adds change listeners to tone radios to update active state.
+ */
 const setupSelectRefresh = (): void => {
     // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
@@ -68,6 +94,10 @@ const setupSelectRefresh = (): void => {
     }
 };
 
+
+// ================================
+// 3. Main App Initialization
+// ================================
 
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
@@ -79,7 +109,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Centralized utility function for copy-to-clipboard with visual feedback
+// ================================
+// 4. UI Rendering Helpers
+// ================================
+
+/**
+ * Centralized utility function for copy-to-clipboard with visual feedback
+ * Handles both Clipboard API and execCommand fallback. Shows feedback on the button.
+ */
 function copyToClipboard(
     text: string,
     button: HTMLButtonElement,
@@ -216,6 +253,10 @@ interface ReplyResponse {
 
 // Main fetchReplies function, using centralized constants and utils
 /** Show the pulsating brain loading indicator in the conversation area */
+/**
+ * Show the pulsating brain loading indicator in the conversation area
+ * @param convoDiv - The conversation container
+ */
 function showLoadingIndicator(convoDiv: HTMLElement) {
     clearSummaryAndCount(convoDiv);
     const loadingDiv = document.createElement("div");
@@ -225,6 +266,10 @@ function showLoadingIndicator(convoDiv: HTMLElement) {
 }
 
 /** Remove summary and message count from the conversation area */
+/**
+ * Remove summary and message count from the conversation area
+ * @param convoDiv - The conversation container
+ */
 function clearSummaryAndCount(convoDiv: HTMLElement) {
     const oldSummary = convoDiv.querySelector(".summary");
     if (oldSummary) oldSummary.remove();
@@ -233,6 +278,12 @@ function clearSummaryAndCount(convoDiv: HTMLElement) {
 }
 
 /** Render the summary and message count in the conversation area */
+/**
+ * Render the summary and message count in the conversation area
+ * @param convoDiv - The conversation container
+ * @param summary - The summary HTML string
+ * @param messageCount - The number of messages
+ */
 function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCount: number) {
     clearSummaryAndCount(convoDiv);
     const summaryDiv = document.createElement("div");
@@ -250,6 +301,11 @@ function renderSummaryAndCount(convoDiv: HTMLElement, summary: string, messageCo
  * @param convoDiv The conversation container element
  * @param message The error message to display
  */
+/**
+ * Render an error indicator in the conversation area with a custom message
+ * @param convoDiv - The conversation container element
+ * @param message - The error message to display
+ */
 function renderErrorIndicator(convoDiv: HTMLElement, message = "Failed to load replies") {
     clearSummaryAndCount(convoDiv);
     const errorDiv = document.createElement("div");
@@ -263,6 +319,11 @@ function renderErrorIndicator(convoDiv: HTMLElement, message = "Failed to load r
  * @param error The error object
  * @param userMessage The message to display to the user
  */
+/**
+ * Log the error to the console and show a user-friendly message in the UI
+ * @param error - The error object
+ * @param userMessage - The message to display to the user
+ */
 function logAndShowError(error: unknown, userMessage: string) {
     console.error("[WellSaid]", error);
     const convoDiv = utils.getById("conversation");
@@ -271,6 +332,10 @@ function logAndShowError(error: unknown, userMessage: string) {
     if (suggDivFinal) suggDivFinal.innerHTML = "";
 }
 
+/**
+ * Main fetchReplies function
+ * Fetches replies from the API and updates the UI.
+ */
 async function fetchReplies(): Promise<void> {
     const suggDiv = utils.getById("suggestions");
     const convoDiv = utils.getById("conversation");
@@ -322,6 +387,11 @@ async function fetchReplies(): Promise<void> {
     }
 }
 
+/**
+ * Render all replies into the suggestions container
+ * @param suggDiv - The suggestions container
+ * @param replies - Array of reply strings
+ */
 function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
     if (!suggDiv) return
 
@@ -334,6 +404,10 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
     }
 }
 
+// ================================
+// 5. Types & Interfaces
+// ================================
+
 /**
  * Interface for the API reply response
  */
@@ -343,6 +417,16 @@ interface ReplyResponse {
     messageCount: number;
 }
 
+// ================================
+// 6. Main Rendering Logic
+// ================================
+
+/**
+ * Create a reply div with text and copy button
+ * @param reply - The reply text
+ * @param suggDiv - The parent suggestions container
+ * @returns The reply div element
+ */
 function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
     const div = document.createElement("div");
     const copyBtn = document.createElement("button");
