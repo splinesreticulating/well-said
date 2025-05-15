@@ -1,8 +1,5 @@
 /**
  * WellSaid App Main Script
- * Organized for clarity and maintainability.
- *
- * NOTE: For best type safety, enable "strict": true in your tsconfig.json.
  *
  * Sections:
  * 1. DOM & Persistence Helpers
@@ -16,18 +13,14 @@
 // 1. DOM & Persistence Helpers
 // ================================
 
-/** Utility helpers for DOM and persistence */
+// Utility helpers for DOM and persistence
 const utils = {
-    /**
-     * Get an element by ID (shorthand for document.getElementById), with type safety
-     */
+    // Get an element by ID (shorthand for document.getElementById), with type safety
     getById<T extends HTMLElement = HTMLElement>(id: string): T | null {
         return document.getElementById(id) as T | null;
     },
 
-    /**
-     * Add an event listener to an element, if it exists
-     */
+    // Add an event listener to an element, if it exists
     on<K extends keyof HTMLElementEventMap>(
         el: HTMLElement | null,
         event: K,
@@ -36,16 +29,12 @@ const utils = {
         el?.addEventListener(event, handler);
     },
 
-    /**
-     * Save context string to localStorage
-     */
+    // Save context string to localStorage
     saveContext(val: string): void {
         localStorage.setItem("well-said_context", val);
     },
 
-    /**
-     * Load context string from localStorage
-     */
+    // Load context string from localStorage
     loadContext(): string {
         return localStorage.getItem("well-said_context") || "";
     },
@@ -56,7 +45,7 @@ const utils = {
 // ================================
 
 /**
- * Setup input persistence for the context textarea
+ * Set up input persistence for the context textarea
  * Loads and saves context to localStorage, and expands details on focus.
  */
 const setupInputPersistence = (): void => {
@@ -72,11 +61,7 @@ const setupInputPersistence = (): void => {
     });
 };
 
-/** Setup tone radio group refresh styling */
-/**
- * Toggle the 'active' class on the correct tone label
- * @param e - The event from the radio input
- */
+// Set up tone radio group refresh styling
 const toggleActiveToneLabel = (e: Event): void => {
     const labels = document.querySelectorAll("#tone-radio-group label");
     for (const label of labels) label.classList.remove("active");
@@ -84,12 +69,8 @@ const toggleActiveToneLabel = (e: Event): void => {
     if (label) label.classList.add("active");
 };
 
-/**
- * Setup tone radio group refresh styling
- * Adds change listeners to tone radios to update active state.
- */
+// Listen for changes to the tone radio group
 const setupSelectRefresh = (): void => {
-    // Listen for changes to the tone radio group
     const toneRadios = document.querySelectorAll('input[name="tone"]');
     for (const radio of toneRadios) {
         (radio as HTMLInputElement).addEventListener("change", toggleActiveToneLabel);
@@ -254,11 +235,6 @@ interface ReplyResponse {
 }
 
 // Main fetchReplies function, using centralized constants and utils
-/** Show the pulsating brain loading indicator in the conversation area */
-/**
- * Show the pulsating brain loading indicator in the conversation area
- * @param convoDiv - The conversation container
- */
 const showLoadingIndicator = (convoDiv: HTMLElement): void => {
     clearSummaryAndCount(convoDiv);
     const loadingDiv = document.createElement("div");
@@ -267,11 +243,7 @@ const showLoadingIndicator = (convoDiv: HTMLElement): void => {
     convoDiv.appendChild(loadingDiv);
 }
 
-/** Remove summary and message count from the conversation area */
-/**
- * Remove summary and message count from the conversation area
- * @param convoDiv - The conversation container
- */
+// Remove summary and message count from the conversation area
 const clearSummaryAndCount = (convoDiv: HTMLElement): void => {
     const oldSummary = convoDiv.querySelector(".summary");
     if (oldSummary) oldSummary.remove();
@@ -279,13 +251,7 @@ const clearSummaryAndCount = (convoDiv: HTMLElement): void => {
     if (oldCount) oldCount.remove();
 }
 
-/** Render the summary and message count in the conversation area */
-/**
- * Render the summary and message count in the conversation area
- * @param convoDiv - The conversation container
- * @param summary - The summary HTML string
- * @param messageCount - The number of messages
- */
+// Render the summary and message count in the conversation area
 const renderSummaryAndCount = (convoDiv: HTMLElement, summary: string, messageCount: number): void => {
     clearSummaryAndCount(convoDiv);
     const summaryDiv = document.createElement("div");
@@ -298,16 +264,7 @@ const renderSummaryAndCount = (convoDiv: HTMLElement, summary: string, messageCo
     convoDiv.appendChild(countDiv);
 }
 
-/**
- * Render an error indicator in the conversation area with a custom message
- * @param convoDiv The conversation container element
- * @param message The error message to display
- */
-/**
- * Render an error indicator in the conversation area with a custom message
- * @param convoDiv - The conversation container element
- * @param message - The error message to display
- */
+// Render an error indicator in the conversation area with a custom message
 const renderErrorIndicator = (convoDiv: HTMLElement, message = "Failed to load replies"): void => {
     clearSummaryAndCount(convoDiv);
     const errorDiv = document.createElement("div");
@@ -316,16 +273,7 @@ const renderErrorIndicator = (convoDiv: HTMLElement, message = "Failed to load r
     convoDiv.appendChild(errorDiv);
 }
 
-/**
- * Log the error to the console and show a user-friendly message in the UI
- * @param error The error object
- * @param userMessage The message to display to the user
- */
-/**
- * Log the error to the console and show a user-friendly message in the UI
- * @param error - The error object
- * @param userMessage - The message to display to the user
- */
+// Log the error to the console and show a user-friendly message in the UI
 const logAndShowError = (error: unknown, userMessage: string): void => {
     console.error("[WellSaid]", error);
     const convoDiv = utils.getById("conversation");
@@ -334,10 +282,7 @@ const logAndShowError = (error: unknown, userMessage: string): void => {
     if (suggDivFinal) suggDivFinal.innerHTML = "";
 }
 
-/**
- * Main fetchReplies function
- * Fetches replies from the API and updates the UI.
- */
+// Fetches replies from the API and updates the UI.
 const fetchReplies = async (): Promise<void> => {
     const suggDiv = utils.getById("suggestions");
     const convoDiv = utils.getById("conversation");
@@ -360,7 +305,7 @@ const fetchReplies = async (): Promise<void> => {
         const days = Number.parseInt(windowVal);
         start = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
     } else {
-        // default to shortest window
+        // Default to shortest window
         start = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
     }
     const startDate = start.toISOString();
@@ -389,11 +334,7 @@ const fetchReplies = async (): Promise<void> => {
     }
 }
 
-/**
- * Render all replies into the suggestions container
- * @param suggDiv - The suggestions container
- * @param replies - Array of reply strings
- */
+// Render all replies into the suggestions container
 const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
     if (!suggDiv) return
 
@@ -410,9 +351,7 @@ const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
 // 5. Types & Interfaces
 // ================================
 
-/**
- * Interface for the API reply response
- */
+// Interface for the API reply response
 interface ReplyResponse {
     summary: string;
     replies: string[];
@@ -423,12 +362,8 @@ interface ReplyResponse {
 // 6. Main Rendering Logic
 // ================================
 
-/**
- * Create a reply div with text and copy button
- * @param reply - The reply text
- * @param suggDiv - The parent suggestions container
- * @returns The reply div element
- */
+
+// Create a reply div with text and copy button
 const createReplyDiv = (reply: string): HTMLDivElement => {
     const div = document.createElement("div");
     const copyBtn = document.createElement("button");
@@ -465,4 +400,3 @@ const createReplyDiv = (reply: string): HTMLDivElement => {
 
     return div;
 }
-
