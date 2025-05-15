@@ -42,7 +42,7 @@ function setupInputPersistence(): void {
     const contextDetails = utils.getById("context-details") as HTMLDetailsElement | null;
     if (!contextInput) return;
     contextInput.value = utils.loadContext();
-    utils.on(contextInput, "input", (e) =>
+    utils.on(contextInput, "input", (e: Event) =>
         utils.saveContext((e.target as HTMLTextAreaElement)?.value)
     );
     utils.on(contextInput, "focus", () => {
@@ -52,7 +52,7 @@ function setupInputPersistence(): void {
 
 /** Setup tone radio group refresh styling */
 /** Toggle the 'active' class on the correct tone label */
-function toggleActiveToneLabel(e: Event) {
+function toggleActiveToneLabel(e: Event): void {
     const labels = document.querySelectorAll("#tone-radio-group label");
     for (const label of labels) label.classList.remove("active");
     const label = (e.target as HTMLElement).closest("label") as HTMLElement;
@@ -322,6 +322,15 @@ function renderReplies(suggDiv: HTMLElement, replies: string[]): void {
             suggDiv.appendChild(createReplyDiv(reply, suggDiv))
         }
     }
+}
+
+/**
+ * Interface for the API reply response
+ */
+interface ReplyResponse {
+    summary: string;
+    replies: string[];
+    messageCount: number;
 }
 
 function createReplyDiv(reply: string, suggDiv: HTMLElement): HTMLDivElement {
