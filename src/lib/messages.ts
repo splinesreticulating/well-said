@@ -25,28 +25,27 @@ export const getRecentMessages = async (
     startDate?: string,
     endDate?: string,
 ): Promise<Message[]> => {
-    const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database })
-
-    // Convert ISO date string to Apple nanoseconds-since-2001-01-01
-    function isoToAppleNs(iso: string): number {
-        const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime()
-        const target = new Date(iso).getTime()
-        return (target - appleEpoch) * 1000000 // ms to ns
+    if (!PARTNER_HANDLE_ID) {
+        logger.warn("PARTNER_PHONE env var not set; cannot fetch messages.");
+        return [];
     }
 
-    let dateWhere = ""
-    const params: (string | number)[] = []
+    const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database });
+    const isoToAppleNs = (iso: string): number => {
+        const appleEpoch = new Date("2001-01-01T00:00:00Z").getTime();
+        const target = new Date(iso).getTime();
+        return (target - appleEpoch) * 1000000;
+    };
 
-    if (PARTNER_HANDLE_ID !== undefined) params.push(PARTNER_HANDLE_ID)
-
+    let dateWhere = "";
+    const params: (string | number)[] = [PARTNER_HANDLE_ID];
     if (startDate) {
-        dateWhere += " AND message.date >= ?"
-        params.push(isoToAppleNs(startDate))
+        dateWhere += " AND message.date >= ?";
+        params.push(isoToAppleNs(startDate));
     }
-
     if (endDate) {
-        dateWhere += " AND message.date <= ?"
-        params.push(isoToAppleNs(endDate))
+        dateWhere += " AND message.date <= ?";
+        params.push(isoToAppleNs(endDate));
     }
 
     const query = `
@@ -63,13 +62,16 @@ export const getRecentMessages = async (
         WHERE message.text IS NOT NULL
         AND handle.id = ?
         ${dateWhere}
-        ORDER BY message.date DESC`
+        ORDER BY message.date DESC`;
 
-    const rows = await db.all(query, params)
+    let rows: MessageRow[] = [];
+    try {
+        rows = await db.all(query, params) as MessageRow[];
+    } finally {
+        await db.close();
+    }
 
-    await db.close()
-
-    logger.info(`📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`)
+    logger.info(`📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`);
 
     const formattedRows = rows
         .map((row: MessageRow) => ({
@@ -81,10 +83,9 @@ export const getRecentMessages = async (
             text: row.text,
             timestamp: row.timestamp,
         }))
-        .reverse()
-    
-    // Return empty array if all messages are from 'me'
-    const hasPartnerMessages = formattedRows.some(msg => msg.sender !== "me")
+        .reverse();
 
-    return hasPartnerMessages ? formattedRows : []
-}
+    // Return empty array if all messages are from 'me'
+    const hasPartnerMessages = formattedRows.some(msg => msg.sender !== "me");
+    return hasPartnerMessages ? formattedRows : [];
+};
