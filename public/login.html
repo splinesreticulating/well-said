@@ -59,11 +59,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const loginForm = document.getElementById('login-form')
       const errorMessage = document.getElementById('error-message')
-      const urlParams = new URLSearchParams(window.location.search)
 
-      if (urlParams.get('error') === 'auth') {
-        errorMessage.style.display = 'block'
-      }
       
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault()
