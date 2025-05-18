@@ -10,7 +10,7 @@
 
 ## 📝 Project Overview
 
-**WellSaid** is a smart reply tool for iMessage. It leverages AI to help you craft thoughtful, emotionally intelligent responses to your partner's texts, right from your own device. WellSaid summarizes recent conversations and suggests 2–3 natural, emotionally aware replies in your own voice, helping you communicate with empathy and clarity.
+**WellSaid** is a smart reply tool for iMessage. It leverages AI to help you craft thoughtful, emotionally intelligent responses to your partner's texts, right from your own device. It does this by summarizing recent conversations and suggesting natural, emotionally aware replies in your own voice, helping you communicate with empathy and clarity.
 
 ---
 
