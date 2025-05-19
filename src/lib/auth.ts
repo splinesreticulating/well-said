@@ -1,6 +1,14 @@
 import type { Request, Response, NextFunction } from "express"
 import logger from "./logger"
 
+// Add session types
+declare module "express-session" {
+    interface SessionData {
+        isAuthenticated?: boolean
+        username?: string
+    }
+}
+
 // Define auth middleware and handlers as an object
 const auth = {
     // Simple authentication middleware
@@ -55,13 +63,4 @@ const auth = {
     },
 }
 
-// Export the auth object
 export default auth
-
-// Add session types
-declare module "express-session" {
-    interface SessionData {
-        isAuthenticated?: boolean
-        username?: string
-    }
-}
