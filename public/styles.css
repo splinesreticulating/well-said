@@ -85,6 +85,10 @@ h2 {
     }
 }
 
+#conversation {
+    display: none;
+}
+
 .conversation {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
@@ -244,6 +248,7 @@ h2 {
 }
 details {
     margin-top: 1rem;
+    margin-bottom: 0.5rem;
     background: white;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
@@ -299,6 +304,7 @@ details summary:hover {
     flex-wrap: wrap;
     gap: 0.5rem;
     width: 650px;
+    margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {

@@ -278,7 +278,10 @@ const fetchReplies = async (): Promise<void> => {
 
     // Clear the suggestions area
     if (suggDiv) suggDiv.innerHTML = "";
-    if (convoDiv) showLoadingIndicator(convoDiv);
+    if (convoDiv) {
+        convoDiv.style.display = 'block';
+        showLoadingIndicator(convoDiv);
+    }
 
     // Get selected tone from radio buttons
     const toneRadio = document.querySelector('input[name="tone"]:checked') as HTMLInputElement | null;
