@@ -64,6 +64,12 @@ const setupInputPersistence = (): void => {
     const contextDetails = utils.getById<HTMLDetailsElement>("context-details");
     if (!contextInput) return;
     contextInput.value = utils.loadContext();
+
+    // Expand context details if context is not empty on page load
+    if (contextDetails && contextInput.value.trim() !== "") {
+        contextDetails.open = true;
+    }
+
     utils.on(contextInput, "input", (e: Event) =>
         utils.saveContext((e.target as HTMLTextAreaElement)?.value ?? "")
     );
