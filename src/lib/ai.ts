@@ -1,4 +1,4 @@
-import type { Message } from "./messages"
+import type { Message } from "./types"
 import { buildReplyPrompt, permanentContext } from "./prompts"
 import { parseSummaryToHumanReadable } from "./utils"
 import logger from './logger'

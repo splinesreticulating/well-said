@@ -3,20 +3,7 @@ import { open } from "sqlite"
 import os from "node:os"
 import path from "node:path"
 import logger from "./logger"
-
-export interface Message {
-    sender: string
-    text: string
-    timestamp: string
-}
-
-interface MessageRow {
-    is_from_me: boolean
-    text: string
-    date: string
-    contact_id?: string
-    timestamp: string
-}
+import type { Message, MessageRow } from "./types"
 
 const CHAT_DB_PATH = path.join(os.homedir(), "Library", "Messages", "chat.db")
 const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
