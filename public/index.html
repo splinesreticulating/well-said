@@ -20,7 +20,7 @@
 
   <div class="content-container">
     <div class="timeframe-controls">
-      <label for="window-back">Summarize messages from the last:</label>
+      <label for="window-back">summarize messages from the last:</label>
       <select id="window-back" name="window-back">
         <option value="1h">hour</option>
         <option value="2h">2 hours</option>
@@ -36,31 +36,27 @@
         <option value="5d">5 days</option>
         <option value="7d">week</option>
       </select>
-      <button id="go-btn">Go</button>
+      <button id="go-btn">go</button>
     </div>
-
-    <div id="conversation" class="conversation"></div>
-
-    <h2>Suggested Replies</h2>
-    <div>
-      <div id="tone-radio-group" class="radio-group">
-        <label class="active"><input type="radio" name="tone" value="gentle" checked> Gentle</label>
-        <label><input type="radio" name="tone" value="honest"> Honest</label>
-        <label><input type="radio" name="tone" value="funny"> Funny</label>
-        <label><input type="radio" name="tone" value="reassuring"> Reassuring</label>
-        <label><input type="radio" name="tone" value="concise"> Concise</label>
-      </div>
-    </div>
-    <div id="suggestions" class="suggestions"></div>
-
     <details id="context-details">
-      <summary><strong>More context</strong></summary>
+      <summary>more context</summary>
       <textarea id="context-input" rows="4"></textarea>
       <div class="context-hint">
-        Anything else we should know about?
+        anything else we should know about?
       </div>
     </details>
-  </div>
+    <div id="conversation" class="conversation"></div>
+    <div id="tone-container">
+      <div id="tone-radio-group" class="radio-group">
+        <label class="active"><input type="radio" name="tone" value="gentle" checked>gentle</label>
+        <label><input type="radio" name="tone" value="honest">honest</label>
+        <label><input type="radio" name="tone" value="funny">funny</label>
+        <label><input type="radio" name="tone" value="reassuring">reassuring</label>
+        <label><input type="radio" name="tone" value="concise">concise</label>
+      </div>
+    </div>
+    <h2>suggested replies</h2>
+    <div id="suggestions" class="suggestions"></div>
   <script src="../dist/public/app.js"></script>
 </body>
 
