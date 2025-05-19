@@ -42,9 +42,7 @@ export const APPLE_EPOCH_DATE = "2001-01-01T00:00:00Z";
 export const ISO_TEST_DATE = "2023-01-01T00:00:00Z";
 
 // Tones
-export const TONE_FRIENDLY = "friendly";
-export const TONE_PROFESSIONAL = "professional";
-export const TONE_DIRECT = "direct";
+export const TONE_CONCISE = "concise";
 export const DEFAULT_TONE = "gentle";
 
 // Context

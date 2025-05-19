@@ -1,11 +1,11 @@
 import express from "express"
-import type { Request, Response, NextFunction, RequestHandler } from "express"
+import type { RequestHandler } from "express"
 import request from "supertest"
 import type { SuperAgentTest } from "supertest"
 import session from "express-session"
 import * as messagesModule from "../src/lib/messages"
 import * as aiModule from "../src/lib/ai"
-import type { Message } from "../src/lib/messages"
+import type { Message } from "../src/lib/types"
 
 // Extend the SessionData interface to include our custom properties
 declare module "express-session" {
@@ -26,13 +26,13 @@ import {
     ERROR_INVALID_CREDENTIALS,
     ERROR_SERVER,
     INFO_NO_MESSAGES,
-    TONE_FRIENDLY,
+    TONE_CONCISE,
     TEST_CONTEXT,
     DEFAULT_TONE
 } from './testConstants'
 
 // Constants specific to this test file
-const TEST_TONE = TONE_FRIENDLY
+const TEST_TONE = TONE_CONCISE
 
 // Mock external modules
 jest.mock("../src/lib/messages")

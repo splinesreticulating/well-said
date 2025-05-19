@@ -9,8 +9,7 @@ import {
     TEST_SENDER_PARTNER,
     TEST_MESSAGE_1,
     TEST_MESSAGE_2,
-    TONE_FRIENDLY,
-    TONE_PROFESSIONAL,
+    TONE_CONCISE,
     TEST_CONTEXT,
     ERROR_API_KEY,
     ERROR_API_KEY_SETUP,
@@ -27,7 +26,7 @@ process.env.OPENAI_MODEL = TEST_MODEL;
 
 import { getSuggestedReplies } from "../../src/lib/ai"
 import * as utils from "../../src/lib/utils"
-import type { Message } from "../../src/lib/messages"
+import type { Message } from "../../src/lib/types"
 
 // Mock the fetch function
 global.fetch = jest.fn()
@@ -76,7 +75,7 @@ describe("AI Module", () => {
         const { getSuggestedReplies: freshGetSuggestedReplies } = require("../../src/lib/ai")
         
         // Act
-        const result = await freshGetSuggestedReplies(mockMessages, "friendly", "")
+        const result = await freshGetSuggestedReplies(mockMessages, TONE_CONCISE, "")
         
         // Assert
         expect(result).toEqual({
@@ -100,7 +99,7 @@ describe("AI Module", () => {
         ;(global.fetch as jest.Mock).mockResolvedValue(mockResponse)
         
         // Act
-        const result = await getSuggestedReplies(mockMessages, TONE_FRIENDLY, "")
+        const result = await getSuggestedReplies(mockMessages, TONE_CONCISE, "")
         
         // Assert - Check API call
         expect(global.fetch).toHaveBeenCalledWith(
@@ -136,7 +135,7 @@ describe("AI Module", () => {
         ;(global.fetch as jest.Mock).mockResolvedValue(errorResponse)
         
         // Act
-        const result = await getSuggestedReplies(mockMessages, TONE_FRIENDLY, "")
+        const result = await getSuggestedReplies(mockMessages, TONE_CONCISE, "")
         
         // Assert
         expect(result).toEqual({
@@ -154,7 +153,7 @@ describe("AI Module", () => {
         // Act
         await getSuggestedReplies(
             mockMessages, 
-            TONE_PROFESSIONAL, 
+            TONE_CONCISE, 
             TEST_CONTEXT
         )
         
@@ -162,7 +161,7 @@ describe("AI Module", () => {
         const fetchCall = (global.fetch as jest.Mock).mock.calls[0]
         const requestBody = JSON.parse(fetchCall[1].body)
         
-        expect(requestBody.messages[1].content).toContain(`Tone: ${TONE_PROFESSIONAL}`)
+        expect(requestBody.messages[1].content).toContain(`Tone: ${TONE_CONCISE}`)
         expect(requestBody.messages[1].content).toContain(TEST_CONTEXT)
     })
 })

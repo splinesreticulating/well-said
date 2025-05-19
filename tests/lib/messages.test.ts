@@ -1,4 +1,4 @@
-import type { Message } from "../../src/lib/messages"
+import type { Message } from "../../src/lib/types"
 
 // Import shared constants
 import {

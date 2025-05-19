@@ -2,8 +2,7 @@ import { buildReplyPrompt, permanentContext } from "../../src/lib/prompts"
 
 // Import shared constants
 import {
-    TONE_FRIENDLY,
-    TONE_DIRECT,
+    TONE_CONCISE,
     SUMMARY_TAG,
     REPLY_1_TAG,
     REPLY_2_TAG,
@@ -14,8 +13,6 @@ import {
 } from '../testConstants'
 
 // Constants specific to this test file
-const TEST_TONE_FRIENDLY = TONE_FRIENDLY
-const TEST_TONE_DIRECT = TONE_DIRECT
 const TEST_CONTEXT = "We're planning a vacation next week"
 const TEST_MESSAGE_1 = "Me: Hey, how was your day?"
 const TEST_MESSAGE_2 = "Partner: It was good! Had a productive meeting."
@@ -28,7 +25,7 @@ describe("Prompts Module", () => {
                 TEST_MESSAGE_1,
                 TEST_MESSAGE_2
             ]
-            const tone = TEST_TONE_FRIENDLY
+            const tone = TONE_CONCISE
             const context = TEST_CONTEXT
             
             // Act
@@ -52,7 +49,7 @@ describe("Prompts Module", () => {
         test("works correctly without context field", () => {
             // Arrange
             const messages = ["Me: What time is dinner?"]
-            const tone = TEST_TONE_DIRECT
+            const tone = TONE_CONCISE
             const context = ""
             
             // Act
