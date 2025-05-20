@@ -8,28 +8,28 @@
 
 ---
 
-## 📝 Project Overview
+## Project Overview
 
 **WellSaid** is a smart reply tool for iMessage. It leverages AI to help you craft thoughtful, emotionally intelligent responses to your partner's texts, right from your own device. It does this by summarizing recent conversations and suggesting natural, emotionally aware replies in your own voice, helping you communicate with empathy and clarity.
 
 ---
 
-## ✨ Features
+## Features
 
-- 📱 **iMessage Smart Reply**: Summarizes recent conversations and suggests emotionally intelligent responses.
-- 🎭 **Customizable Tone**: Choose your reply tone (gentle, honest, funny, reassuring, concise).
-- 🧠 **Context Awareness**: Add context about your relationship or conversation for better suggestions.
-- ⚡ **Fast & Modern UI**: Clean, responsive web interface with instant feedback.
-- 🔑 **Easy Setup**: Simple environment configuration and one-command start.
+- **iMessage Smart Reply**: Summarizes recent conversations and suggests emotionally intelligent responses.
+- **Customizable Tone**: Choose your reply tone (gentle, honest, funny, reassuring, concise).
+- **Context Awareness**: Add context about your relationship or conversation for better suggestions.
+- **Fast & Modern UI**: Clean, responsive web interface with instant feedback.
+- **Easy Setup**: Simple environment configuration and one-command start.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
+- Access to your iMessage chat.db (macOS)
 - Node.js (v18+ recommended)
 - npm
-- Access to your iMessage chat.db (macOS)
 - OpenAI API key
 
 ### Installation
@@ -58,11 +58,9 @@ $ npm run build
 $ npm start
 ```
 
-The app will be available at [http://localhost:2309](http://localhost:2309).
-
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Frontend**: HTML, CSS, Vanilla JS (public/)
 - **Backend**: Node.js, Express, TypeScript
 - **Database**: SQLite (reads iMessage chat.db)
@@ -71,25 +69,25 @@ The app will be available at [http://localhost:2309](http://localhost:2309).
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Edit `.env` with your keys and settings:
 
 ```
 OPENAI_API_KEY=your-key-here
 OPENAI_MODEL=gpt-4
-OPENAI_TEMPERATURE=0.7
+OPENAI_TEMPERATURE=0.5
 PARTNER_PHONE=+19999999999
 ```
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ---
 
-## 📄 License
+## License
 
 MIT License. See [LICENSE](./LICENSE) for details.
