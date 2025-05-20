@@ -1,4 +1,5 @@
 :root {
+    /* Color palette */
     --primary: #5c4033;
     --primary-light: #8b6b4c;
     --light: #f5f0e8;
@@ -7,13 +8,18 @@
     --error: #e74c3c;
     --gray: #666666;
     --white: #ffffff;
+    
+    /* Common values */
     --shadow-color: rgba(92, 64, 51, 0.1);
     --focus-color: rgba(67, 97, 238, 0.2);
     --border-radius: 8px;
-    /* Use primary for these */
+    --standard-shadow: 0 2px 4px var(--shadow-color);
+    --hover-shadow: 0 4px 8px var(--shadow-color);
+    --standard-transition: all 0.2s ease;
+    
+    /* Aliases */
     --secondary: var(--primary);
     --dark: var(--primary);
-    /* Use light for these */
     --background: var(--light);
     --container-bg: var(--light);
     --border-color: #d9cfc1;
@@ -38,7 +44,7 @@ body {
     padding: 1.5rem;
     max-width: 700px;
     width: 100%;
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: var(--hover-shadow);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -102,7 +108,7 @@ h2 {
     background: var(--white);
     padding: 1.5rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: var(--standard-shadow);
     box-sizing: border-box;
     border: 1px solid var(--border-color);
 }
@@ -117,7 +123,7 @@ h2 {
     margin: 0.5rem 0;
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: var(--standard-shadow);
     max-width: 85%;
 }
 .me {
@@ -185,8 +191,8 @@ h2 {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 1rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(92, 64, 51, 0.05);
+    transition: var(--standard-transition);
+    box-shadow: var(--standard-shadow);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -201,7 +207,7 @@ h2 {
 }
 .reply:hover {
     background: var(--light);
-    box-shadow: 0 4px 8px var(--shadow-color);
+    box-shadow: var(--hover-shadow);
     border-color: var(--primary-light);
 }
 
@@ -218,7 +224,7 @@ h2 {
     border-radius: 4px;
     padding: 0.5rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--standard-transition);
     flex-shrink: 0;
     align-self: center;
     display: flex;
@@ -231,6 +237,7 @@ h2 {
 .copy-btn:hover {
     background-color: var(--primary-light);
     transform: translateY(-2px);
+    box-shadow: var(--standard-shadow);
 }
 
 .copy-btn svg {
@@ -260,7 +267,7 @@ details {
     border-radius: var(--border-radius);
     padding: 1rem 1.5rem 1.5rem;
     width: 650px;
-    box-shadow: 0 2px 4px rgba(92, 64, 51, 0.05);
+    box-shadow: var(--standard-shadow);
     box-sizing: border-box;
 }
 
@@ -336,7 +343,7 @@ details summary:hover {
     padding: 0.4rem 0.7rem;
     background: var(--white);
     border-radius: var(--border-radius);
-    transition: all 0.2s ease;
+    transition: var(--standard-transition);
     font-size: 0.95rem;
 }
 
@@ -353,7 +360,7 @@ details summary:hover {
     border: 2px solid #e0e0e0;
     border-radius: 50%;
     margin: 0;
-    transition: all 0.2s ease;
+    transition: var(--standard-transition);
     position: relative;
 }
 
@@ -393,7 +400,7 @@ button {
     border-radius: var(--border-radius);
     padding: 0.75rem 1rem;
     border: 2px solid var(--border-color);
-    transition: all 0.2s ease;
+    transition: var(--standard-transition);
     color: var(--dark);
 }
 
@@ -434,13 +441,13 @@ button {
     padding: 0.75rem 1.5rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--standard-transition);
 }
 
 button:hover {
     background: var(--primary-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--shadow-color);
+    box-shadow: var(--hover-shadow);
 }
 
 .timeframe-controls {
@@ -480,8 +487,8 @@ button:hover {
     margin: 0 auto;
     padding: 20px;
     background-color: var(--white);
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--standard-shadow);
 }
 .login-form {
     display: flex;
@@ -491,14 +498,14 @@ button:hover {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--border-radius);
 }
 .login-form button {
     padding: 10px;
     background-color: var(--primary);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     cursor: pointer;
 }
 .error-message {
