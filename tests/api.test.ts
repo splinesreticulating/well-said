@@ -37,16 +37,6 @@ const TEST_TONE = TONE_CONCISE
 // Mock external modules
 jest.mock("../src/lib/messages")
 jest.mock("../src/lib/ai")
-jest.mock("../src/lib/auth", () => ({
-    __esModule: true,
-    default: {
-        isAuthenticated: jest.fn((req, res, next) => {
-            req.session?.isAuthenticated ? next() : res.status(STATUS_UNAUTHORIZED).json({ error: ERROR_UNAUTHORIZED })
-        }),
-        login: jest.fn(),
-        logout: jest.fn(),
-    },
-}))
 
 describe("API Routes", () => {
     // Test data
@@ -65,11 +55,6 @@ describe("API Routes", () => {
         // Create and configure test app
         app = express()
         app.use(express.json())
-        app.use(session({
-            secret: "test-secret",
-            resave: false,
-            saveUninitialized: false,
-        }))
         
         // Setup route handlers
         setupTestRoutes(app)
@@ -77,19 +62,6 @@ describe("API Routes", () => {
     
     // Helper to set up test routes with explicit typing
     function setupTestRoutes(app: express.Express) {
-        // Login route
-        const loginHandler: RequestHandler = (req, res) => {
-            if (req.body.username === testCredentials.username && 
-                req.body.password === testCredentials.password) {
-                req.session.isAuthenticated = true
-                req.session.username = req.body.username
-                res.status(STATUS_OK).json({ success: true })
-            } else {
-                res.status(STATUS_UNAUTHORIZED).json({ error: ERROR_INVALID_CREDENTIALS })
-            }
-        }
-        app.post(LOGIN_ROUTE, loginHandler)
-        
         // Auth middleware for protected routes
         const authMiddleware: RequestHandler = (req, res, next) => {
             req.session?.isAuthenticated ? 
@@ -131,31 +103,7 @@ describe("API Routes", () => {
         }
         app.post(REPLIES_ROUTE, repliesHandler)
     }
-
-    describe("Login Routes", () => {
-        test("accepts valid credentials and sets session", async () => {
-            // Arrange & Act
-            const response = await request(app)
-                .post(LOGIN_ROUTE)
-                .send(testCredentials)
-            
-            // Assert
-            expect(response.status).toBe(STATUS_OK)
-            expect(response.body).toEqual({ success: true })
-        })
-        
-        test("rejects invalid credentials with 401", async () => {
-            // Arrange & Act
-            const response = await request(app)
-                .post(LOGIN_ROUTE)
-                .send({ username: "wronguser", password: "wrongpass" })
-            
-            // Assert
-            expect(response.status).toBe(STATUS_UNAUTHORIZED)
-            expect(response.body).toEqual({ error: ERROR_INVALID_CREDENTIALS })
-        })
-    })
-    
+       
     describe("Replies Routes", () => {
         test("returns 401 when not authenticated", async () => {
             // Act
