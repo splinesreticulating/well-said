@@ -1,3 +1,21 @@
+/***************************************
+ * WELL SAID - STYLES
+ *
+ * Table of Contents:
+ * 1. CSS Variables
+ * 2. Base Styles
+ * 3. Layout Components
+ * 4. Content Components
+ * 5. Form Elements
+ * 6. Interactive Elements
+ * 7. Utility Classes
+ * 8. Login Page
+ * 9. Animations
+ ***************************************/
+
+/***************************************
+ * 1. CSS VARIABLES
+ ***************************************/
 :root {
     /* Color palette */
     --primary: #5c4033;
@@ -9,17 +27,19 @@
     --gray: #666666;
     --white: #ffffff;
     
-    /* Common values */
-    --shadow-color: rgba(92, 64, 51, 0.1);
-    --focus-color: rgba(67, 97, 238, 0.2);
-    --border-radius: 8px;
-    --standard-shadow: 0 2px 4px var(--shadow-color);
-    --hover-shadow: 0 4px 8px var(--shadow-color);
-    --standard-transition: all 0.2s ease;
+    /* Spacing & sizing */
     --standard-width: 650px;
     --standard-padding: 1.5rem;
     --mobile-padding: 1rem;
     --standard-line-height: 1.4;
+    --border-radius: 8px;
+    
+    /* Effects */
+    --shadow-color: rgba(92, 64, 51, 0.1);
+    --focus-color: rgba(67, 97, 238, 0.2);
+    --standard-shadow: 0 2px 4px var(--shadow-color);
+    --hover-shadow: 0 4px 8px var(--shadow-color);
+    --standard-transition: all 0.2s ease;
     --standard-focus-outline: 0 0 0 3px var(--focus-color);
     
     /* Aliases */
@@ -30,6 +50,9 @@
     --border-color: #d9cfc1;
 }
 
+/***************************************
+ * 2. BASE STYLES
+ ***************************************/
 body {
     font-family: Georgia, "Times New Roman", Times, serif;
     margin: 0;
@@ -43,31 +66,7 @@ body {
     justify-content: center;
 }
 
-.content-container {
-    background-color: var(--container-bg);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    max-width: 700px;
-    width: 100%;
-    box-shadow: var(--hover-shadow);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-@media (max-width: 768px) {
-    .content-container {
-        padding: 1rem;
-        border-radius: 0;
-        max-width: 100%;
-    }
-
-    body {
-        padding: 0;
-    }
-}
-
+/* Typography */
 h1 {
     color: var(--primary);
     margin-bottom: 0.5rem;
@@ -76,13 +75,6 @@ h1 {
     font-family: "Great Vibes", cursive;
     font-weight: normal;
     letter-spacing: 0.02em;
-}
-
-@media (max-width: 768px) {
-    h1 {
-        font-size: 2.2rem;
-        margin: 1rem 0;
-    }
 }
 
 h2 {
@@ -94,14 +86,51 @@ h2 {
     font-weight: normal;
 }
 
+/***************************************
+ * 3. LAYOUT COMPONENTS
+ ***************************************/
+.content-container {
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius);
+    padding: var(--standard-padding);
+    max-width: 700px;
+    width: 100%;
+    box-shadow: var(--hover-shadow);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        margin: 1rem 0;
+    }
+    
     h2 {
         width: 100%;
         font-size: 1.5rem;
         margin: 1rem 0 0.75rem;
     }
+    
+    .content-container {
+        padding: var(--mobile-padding);
+        border-radius: 0;
+        max-width: 100%;
+    }
 }
 
+/***************************************
+ * 4. CONTENT COMPONENTS
+ ***************************************/
+
+/* Conversation container */
 #conversation {
     display: none;
 }
@@ -118,12 +147,7 @@ h2 {
     border: 1px solid var(--border-color);
 }
 
-@media (max-width: 768px) {
-    .conversation {
-        width: 100%;
-        padding: var(--mobile-padding);
-    }
-}
+/* Message elements */
 .message {
     margin: 0.5rem 0;
     padding: 0.75rem 1rem;
@@ -131,6 +155,8 @@ h2 {
     box-shadow: var(--standard-shadow);
     max-width: 85%;
 }
+
+/* Summary section */
 .summary {
     margin: 0.5rem 0 1rem;
     padding: 1rem;
@@ -142,6 +168,8 @@ h2 {
     box-sizing: border-box;
     color: var(--dark);
 }
+
+/* Suggestions container */
 .suggestions {
     display: flex;
     flex-direction: column;
@@ -149,11 +177,22 @@ h2 {
     width: var(--standard-width);
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    .conversation {
+        width: 100%;
+        padding: var(--mobile-padding);
+    }
+    
     .suggestions {
         width: 100%;
     }
 }
+/***************************************
+ * 5. INTERACTIVE ELEMENTS
+ ***************************************/
+
+/* Reply cards */
 .reply {
     background: var(--white);
     border: 1px solid var(--border-color);
@@ -167,12 +206,6 @@ h2 {
     gap: 1rem;
 }
 
-@media (max-width: 768px) {
-    .reply {
-        padding: 0.75rem;
-        font-size: 0.95rem;
-    }
-}
 .reply:hover {
     background: var(--light);
     box-shadow: var(--hover-shadow);
@@ -185,6 +218,7 @@ h2 {
     line-height: var(--standard-line-height);
 }
 
+/* Copy button */
 .copy-btn {
     background-color: var(--primary);
     color: white;
@@ -221,12 +255,23 @@ h2 {
     background-color: var(--warning);
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    .reply {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
     .copy-btn {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
     }
 }
+/***************************************
+ * 6. COLLAPSIBLE SECTIONS
+ ***************************************/
+
+/* Details element */
 details {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
@@ -239,13 +284,6 @@ details {
     box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-    details {
-        width: 100%;
-        padding: 0.75rem var(--mobile-padding) var(--mobile-padding);
-    }
-}
-
 details summary {
     cursor: pointer;
     padding: 0.5rem 0;
@@ -255,6 +293,19 @@ details summary {
 details summary:hover {
     color: var(--secondary);
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    details {
+        width: 100%;
+        padding: 0.75rem var(--mobile-padding) var(--mobile-padding);
+    }
+}
+/***************************************
+ * 7. ANIMATIONS & LOADING STATES
+ ***************************************/
+
+/* Loading indicator */
 .loading-indicator {
     margin: 2rem auto;
     text-align: center;
@@ -264,6 +315,7 @@ details summary:hover {
     color: var(--primary);
 }
 
+/* Animation keyframes */
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -279,29 +331,17 @@ details summary:hover {
     }
 }
 
-/* Custom radio buttons */
+/***************************************
+ * 8. FORM ELEMENTS
+ ***************************************/
+
+/* Radio button groups */
 .radio-group {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     width: var(--standard-width);
     margin-top: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .radio-group {
-        width: 100%;
-        gap: 0.3rem;
-        justify-content: flex-start;
-    }
-
-    .radio-group label {
-        flex: 0 1 auto;
-        margin-bottom: 0.4rem;
-        min-width: auto;
-        font-size: 0.9rem;
-        padding: 0.3rem 0.5rem;
-    }
 }
 
 .radio-group label {
@@ -318,6 +358,12 @@ details summary:hover {
 .radio-group label:hover {
     border-color: var(--primary-light);
     background-color: var(--light);
+}
+
+.radio-group label.active {
+    background-color: var(--shadow-color);
+    border-color: var(--primary);
+    font-weight: 500;
 }
 
 .radio-group input[type="radio"] {
@@ -355,13 +401,24 @@ details summary:hover {
     outline-offset: 2px;
 }
 
-.radio-group label.active {
-    background-color: var(--shadow-color);
-    border-color: var(--primary);
-    font-weight: 500;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .radio-group {
+        width: 100%;
+        gap: 0.3rem;
+        justify-content: flex-start;
+    }
+
+    .radio-group label {
+        flex: 0 1 auto;
+        margin-bottom: 0.4rem;
+        min-width: auto;
+        font-size: 0.9rem;
+        padding: 0.3rem 0.5rem;
+    }
 }
 
-/* Form elements styling */
+/* Common form elements */
 select,
 textarea,
 button {
@@ -373,29 +430,6 @@ button {
     color: var(--dark);
 }
 
-@media (max-width: 768px) {
-    select,
-    textarea,
-    button {
-        padding: 0.6rem 0.8rem;
-        font-size: 1rem;
-    }
-}
-
-#context-input {
-    width: 100%;
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
-    box-sizing: border-box;
-    display: block;
-}
-
-.context-hint {
-    font-size: 0.95em;
-    font-style: italic;
-    color: var(--gray);
-}
-
 select:focus,
 textarea:focus {
     outline: none;
@@ -403,6 +437,7 @@ textarea:focus {
     box-shadow: var(--standard-focus-outline);
 }
 
+/* Buttons */
 button {
     background: var(--primary);
     color: white;
@@ -419,6 +454,22 @@ button:hover {
     box-shadow: var(--hover-shadow);
 }
 
+/* Context input */
+#context-input {
+    width: 100%;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+    box-sizing: border-box;
+    display: block;
+}
+
+.context-hint {
+    font-size: 0.95em;
+    font-style: italic;
+    color: var(--gray);
+}
+
+/* Timeframe controls */
 .timeframe-controls {
     display: flex;
     align-items: center;
@@ -427,7 +478,21 @@ button:hover {
     width: var(--standard-width);
 }
 
+.timeframe-controls select {
+    min-width: 150px;
+    color: var(--dark);
+    background-color: var(--white);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    select,
+    textarea,
+    button {
+        padding: 0.6rem 0.8rem;
+        font-size: 1rem;
+    }
+    
     .timeframe-controls {
         width: 100%;
         flex-direction: row;
@@ -445,12 +510,11 @@ button:hover {
     }
 }
 
-.timeframe-controls select {
-    min-width: 150px;
-    color: var(--dark);
-    background-color: var(--white);
-}
+/***************************************
+ * 9. LOGIN PAGE
+ ***************************************/
 
+/* Login container */
 .login-container {
     max-width: 400px;
     margin: 0 auto;
@@ -459,16 +523,20 @@ button:hover {
     border-radius: var(--border-radius);
     box-shadow: var(--standard-shadow);
 }
+
+/* Login form */
 .login-form {
     display: flex;
     flex-direction: column;
 }
+
 .login-form input {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
 }
+
 .login-form button {
     padding: 10px;
     background-color: var(--primary);
@@ -477,6 +545,8 @@ button:hover {
     border-radius: var(--border-radius);
     cursor: pointer;
 }
+
+/* Error message */
 .error-message {
     color: var(--error);
     margin-bottom: 15px;
