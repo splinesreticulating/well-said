@@ -4,9 +4,7 @@ dotenv.config()
 import express, { type Request, type Response, type NextFunction } from "express"
 import { getRecentMessages } from "./lib/messages"
 import { getSuggestedReplies } from "./lib/ai"
-import auth from "./lib/auth"
 import cors from "cors"
-import session from "express-session"
 import logger from "./lib/logger"
 import helmet from "helmet"
 import rateLimit from "express-rate-limit"
@@ -26,26 +24,6 @@ app.use(rateLimit({
     legacyHeaders: false,
 }))
 
-// =============================
-// Session configuration
-// =============================
-// IMPORTANT: For production, set SESSION_SECRET to a long, random value in your environment.
-// The fallback is only suitable for development/testing.
-if (!process.env.SESSION_SECRET) {
-    throw new Error('SESSION_SECRET must be set in environment for secure session handling!');
-}
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: true, // Always secure if exposed to internet
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        },
-    }),
-) // Hardened: require SESSION_SECRET, secure cookie, sameSite=lax
 
 // =============================
 // CORS configuration
@@ -64,25 +42,9 @@ app.use("/login.html", express.static("public/login.html"));
 app.use("/styles.css", express.static("public/styles.css"));
 app.use("/dist", express.static("dist"));
 
-// =============================
-// Authentication routes (unprotected)
-// =============================
-app.post("/login", (req: Request, res: Response) => {
-    auth.login(req, res)
-});
-app.get("/logout", (req: Request, res: Response) => {
-    auth.logout(req, res)
-});
 
 // =============================
-// Middleware to protect all other routes
-// =============================
-app.use((req: Request, res: Response, next: NextFunction) => {
-    auth.isAuthenticated(req, res, next)
-});
-
-// =============================
-// Protected static files (after authentication check)
+// All static files (unprotected)
 // =============================
 app.use(express.static("public"));
 
@@ -131,6 +93,6 @@ app.post("/replies", async (req: Request, res: Response) => {
     }
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     logger.info(`✅ WellSaid app listening at http://localhost:${PORT}`)
 })
