@@ -49,6 +49,16 @@ const utils = {
     loadContext(): string {
         return localStorage.getItem("well-said_context") || "";
     },
+    
+    // Save font preference to localStorage
+    saveFont(font: string): void {
+        localStorage.setItem("well-said_h1-font", font);
+    },
+    
+    // Load font preference from localStorage
+    loadFont(): string {
+        return localStorage.getItem("well-said_h1-font") || "Great Vibes";
+    },
 };
 
 // ================================
@@ -386,9 +396,50 @@ const renderReplies = (suggDiv: HTMLElement, replies: string[]): void => {
 // 5. Main App Initialization
 // ================================
 
+/**
+ * Setup font selector functionality
+ * - Loads font preference from localStorage
+ * - Applies the saved font to h1
+ * - Sets up event listener for font changes
+ */
+const setupFontSelector = (): void => {
+    const fontSelector = utils.getById<HTMLSelectElement>("h1-font-selector");
+    const h1 = document.querySelector("h1") as HTMLHeadingElement;
+    
+    if (!fontSelector || !h1) return;
+    
+    // Define available fonts - easy to add or remove fonts here
+    const availableFonts = [
+        "Great Vibes",
+        "Dancing Script"
+    ];
+    
+    // Load saved font preference
+    const savedFont = utils.loadFont();
+    
+    // Set the select value to match saved preference
+    if (availableFonts.includes(savedFont)) {
+        fontSelector.value = savedFont;
+        // Apply saved font to h1
+        h1.style.fontFamily = `"${savedFont}", cursive`;
+    }
+    
+    // Listen for changes to the font selector
+    utils.on(fontSelector, "change", () => {
+        const selectedFont = fontSelector.value;
+        if (availableFonts.includes(selectedFont)) {
+            // Apply selected font to h1
+            h1.style.fontFamily = `"${selectedFont}", cursive`;
+            // Save preference
+            utils.saveFont(selectedFont);
+        }
+    });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     setupInputPersistence();
     setupSelectRefresh();
+    setupFontSelector();
 
     const goBtn = utils.getById("go-btn");
     if (goBtn) {
