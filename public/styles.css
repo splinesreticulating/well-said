@@ -2,7 +2,7 @@
  * WELL SAID - STYLES
  *
  * Table of Contents:
- * 1. CSS Variables
+ * 1. Variables
  * 2. Base Styles
  * 3. Layout Components
  * 4. Content Components
@@ -14,7 +14,7 @@
  ***************************************/
 
 /***************************************
- * 1. CSS VARIABLES
+ * 1. VARIABLES
  ***************************************/
 :root {
     /* Color palette */
@@ -130,7 +130,7 @@ h2 {
  * 4. CONTENT COMPONENTS
  ***************************************/
 
-/* Conversation container */
+/* Conversation container -- hidden by default */
 #conversation {
     display: none;
 }
@@ -145,15 +145,6 @@ h2 {
     box-shadow: var(--standard-shadow);
     box-sizing: border-box;
     border: 1px solid var(--border-color);
-}
-
-/* Message elements */
-.message {
-    margin: 0.5rem 0;
-    padding: 0.75rem 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--standard-shadow);
-    max-width: 85%;
 }
 
 /* Summary section */
