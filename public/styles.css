@@ -131,20 +131,6 @@ h2 {
     box-shadow: var(--standard-shadow);
     max-width: 85%;
 }
-.me {
-    background: var(--primary-light);
-    color: var(--dark);
-    align-self: flex-end;
-    border-bottom-right-radius: 0;
-    margin-left: auto;
-}
-.partner {
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    align-self: flex-start;
-    border-bottom-left-radius: 0;
-    margin-right: auto;
-}
 .summary {
     margin: 0.5rem 0 1rem;
     padding: 1rem;
@@ -155,29 +141,6 @@ h2 {
     width: 100%;
     box-sizing: border-box;
     color: var(--dark);
-}
-
-/* Styling for HTML elements in the summary */
-.summary p {
-    margin: 0.5rem 0;
-    line-height: var(--standard-line-height);
-}
-
-.summary h3 {
-    margin: 1rem 0 0.5rem;
-    font-size: 1.1rem;
-    color: var(--secondary);
-    font-weight: 600;
-}
-
-.summary ul {
-    margin: 0.5rem 0;
-    padding-left: 1.5rem;
-}
-
-.summary li {
-    margin-bottom: 0.25rem;
-    line-height: var(--standard-line-height);
 }
 .suggestions {
     display: flex;
