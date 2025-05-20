@@ -18,15 +18,15 @@
  ***************************************/
 :root {
     /* Color palette */
-    --primary: #5c4033;
-    --primary-light: #8b6b4c;
-    --light: #f5f0e8;
-    --success: #38b000;
-    --warning: #ffaa00;
-    --error: #e74c3c;
-    --gray: #666666;
-    --white: #ffffff;
-    
+    --primary: #555B6E;
+    --primary-light: #89B0AE;
+    --light: #BEE3DB;
+    --success: #00C853;
+    --warning: #df8950;
+    --error: #FF5252;
+    --gray: #FFD6BA;
+    --white: #FAF9F9;
+
     /* Spacing & sizing */
     --standard-width: 650px;
     --standard-padding: 1.5rem;
