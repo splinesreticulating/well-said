@@ -517,47 +517,7 @@ button:hover {
 }
 
 /***************************************
- * 9. Font Selector
- ***************************************/
-.font-selector-container {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-}
-
-.font-selector-container label {
-    color: var(--secondary);
-    font-style: italic;
-}
-
-.font-selector-container select {
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background-color: var(--white);
-    color: var(--primary);
-    font-family: Georgia, "Times New Roman", Times, serif;
-    cursor: pointer;
-    transition: var(--standard-transition);
-    box-shadow: var(--standard-shadow);
-}
-
-.font-selector-container select:hover {
-    border-color: var(--primary-light);
-    box-shadow: var(--hover-shadow);
-}
-
-.font-selector-container select:focus {
-    outline: var(--standard-focus-outline);
-    border-color: var(--primary);
-}
-
-/***************************************
- * 10. LOGIN PAGE
+ * 9. LOGIN PAGE
  ***************************************/
 
 /* Login container */
