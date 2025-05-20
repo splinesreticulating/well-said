@@ -347,7 +347,8 @@ details summary:hover {
     flex-wrap: wrap;
     gap: 0.5rem;
     width: var(--standard-width);
-    margin-top: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .radio-group label {
