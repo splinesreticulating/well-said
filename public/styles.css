@@ -16,6 +16,11 @@
     --standard-shadow: 0 2px 4px var(--shadow-color);
     --hover-shadow: 0 4px 8px var(--shadow-color);
     --standard-transition: all 0.2s ease;
+    --standard-width: 650px;
+    --standard-padding: 1.5rem;
+    --mobile-padding: 1rem;
+    --standard-line-height: 1.4;
+    --standard-focus-outline: 0 0 0 3px var(--focus-color);
     
     /* Aliases */
     --secondary: var(--primary);
@@ -84,7 +89,7 @@ h2 {
     color: var(--secondary);
     margin: 1.5rem 0 1rem;
     font-size: 1.8rem;
-    width: 650px;
+    width: var(--standard-width);
     font-family: Georgia, "Times New Roman", Times, serif;
     font-weight: normal;
 }
@@ -104,9 +109,9 @@ h2 {
 .conversation {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
-    width: 650px;
+    width: var(--standard-width);
     background: var(--white);
-    padding: 1.5rem;
+    padding: var(--standard-padding);
     border-radius: var(--border-radius);
     box-shadow: var(--standard-shadow);
     box-sizing: border-box;
@@ -116,7 +121,7 @@ h2 {
 @media (max-width: 768px) {
     .conversation {
         width: 100%;
-        padding: 1rem;
+        padding: var(--mobile-padding);
     }
 }
 .message {
@@ -135,7 +140,7 @@ h2 {
 }
 .partner {
     background: var(--white);
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color);
     align-self: flex-start;
     border-bottom-left-radius: 0;
     margin-right: auto;
@@ -155,7 +160,7 @@ h2 {
 /* Styling for HTML elements in the summary */
 .summary p {
     margin: 0.5rem 0;
-    line-height: 1.4;
+    line-height: var(--standard-line-height);
 }
 
 .summary h3 {
@@ -172,13 +177,13 @@ h2 {
 
 .summary li {
     margin-bottom: 0.25rem;
-    line-height: 1.4;
+    line-height: var(--standard-line-height);
 }
 .suggestions {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    width: 650px;
+    width: var(--standard-width);
 }
 
 @media (max-width: 768px) {
@@ -214,14 +219,14 @@ h2 {
 .reply-text {
     flex: 1;
     white-space: pre-wrap;
-    line-height: 1.4;
+    line-height: var(--standard-line-height);
 }
 
 .copy-btn {
     background-color: var(--primary);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     padding: 0.5rem;
     cursor: pointer;
     transition: var(--standard-transition);
@@ -265,8 +270,8 @@ details {
     background: var(--white);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: 1rem 1.5rem 1.5rem;
-    width: 650px;
+    padding: 1rem var(--standard-padding) var(--standard-padding);
+    width: var(--standard-width);
     box-shadow: var(--standard-shadow);
     box-sizing: border-box;
 }
@@ -274,7 +279,7 @@ details {
 @media (max-width: 768px) {
     details {
         width: 100%;
-        padding: 0.75rem 1rem 1rem;
+        padding: 0.75rem var(--mobile-padding) var(--mobile-padding);
     }
 }
 
@@ -316,7 +321,7 @@ details summary:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    width: 650px;
+    width: var(--standard-width);
     margin-top: 0.5rem;
 }
 
@@ -357,7 +362,7 @@ details summary:hover {
     -webkit-appearance: none;
     width: 1.2rem;
     height: 1.2rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 50%;
     margin: 0;
     transition: var(--standard-transition);
@@ -382,12 +387,13 @@ details summary:hover {
 }
 
 .radio-group input[type="radio"]:focus {
-    outline: 2px solid rgba(67, 97, 238, 0.3);
+    outline: none;
+    box-shadow: var(--standard-focus-outline);
     outline-offset: 2px;
 }
 
 .radio-group label.active {
-    background-color: rgba(92, 64, 51, 0.1);
+    background-color: var(--shadow-color);
     border-color: var(--primary);
     font-weight: 500;
 }
@@ -431,7 +437,7 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--focus-color);
+    box-shadow: var(--standard-focus-outline);
 }
 
 button {
@@ -455,7 +461,7 @@ button:hover {
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-    width: 650px;
+    width: var(--standard-width);
 }
 
 @media (max-width: 768px) {
