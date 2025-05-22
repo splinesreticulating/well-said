@@ -24,5 +24,5 @@ Reply 3: <reply>
 }
 
 export const permanentContext = `
-Act as my therapist suggegsting replies to my partner.
+Act as my therapist suggesting replies to my partner.
 `
